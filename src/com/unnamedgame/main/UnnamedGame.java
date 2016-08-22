@@ -8,9 +8,7 @@ import org.lwjgl.opengl.*;
 
 import com.openglengine.core.*;
 import com.openglengine.entities.*;
-import com.openglengine.eventsystem.*;
 import com.openglengine.eventsystem.defaultevents.*;
-import com.openglengine.renderer.*;
 import com.openglengine.renderer.model.*;
 import com.openglengine.renderer.texture.*;
 import com.openglengine.util.*;
@@ -23,36 +21,16 @@ import com.openglengine.util.math.*;
  *
  */
 public class UnnamedGame {
-	public static final String APP_VERSION = "0.0.1_a";
-	public static final String DISPLAY_TITLE = "UnnamedGame " + APP_VERSION;
-	public static final int DEFAULT_DISPLAY_WIDTH = 1920;
-	public static final int DEFAULT_DISPLAY_HEIGHT = 1080;
-
 	// TODO: tmp refactor
 	private static final float FOV = 70;
-	private static final float ASPECT = DEFAULT_DISPLAY_WIDTH / DEFAULT_DISPLAY_HEIGHT;
+	private static final float ASPECT = Engine.DEFAULT_SCREEN_WIDTH / Engine.DEFAULT_SCREEN_HEIGHT;
 	private static final float NEAR_PLANE = 0.1f;
 	private static final float FAR_PLANE = 1000f;
 
-	private final GlfwManager glfwManager;
-
-	private UnnamedGame() {
-		this(DEFAULT_DISPLAY_WIDTH, DEFAULT_DISPLAY_HEIGHT, false);
-	}
-
-	private UnnamedGame(int screenWidth, int screenHeight, boolean fullscreen) {
-		// Initialize glfw
-		this.glfwManager = new GlfwManager(screenWidth, screenHeight, fullscreen, DISPLAY_TITLE);
-	}
-
-	/* TODO: refactor start() and terminate() */
-	public void start() {
+	public UnnamedGame() {
+		Engine.loadDefaultEngineComponents();
 		this.initGL();
 		this.loop();
-	}
-
-	public void cleanup() {
-		this.glfwManager.cleanup();
 	}
 
 	private void initGL() {
@@ -66,21 +44,19 @@ public class UnnamedGame {
 		// Set the clear color
 		glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
 
-		OpenGLEngine.PROJECTION_MATRIX_STACK.setPerspectiveMatrix(FOV, ASPECT, NEAR_PLANE, FAR_PLANE);
+		// Setup projection matrix
+		Engine.PROJECTION_MATRIX_STACK.setPerspectiveMatrix(FOV, ASPECT, NEAR_PLANE, FAR_PLANE);
+
+		// Setup viewport
+		glViewport(0, 0, Engine.DEFAULT_SCREEN_WIDTH, Engine.DEFAULT_SCREEN_HEIGHT);
+
+		// Enable transparency
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	private void loop() {
 		// TODO: tmp
-		ModelLoader loader = new ModelLoader();
-		Renderer renderer = new Renderer();
-		StaticShader shader = new StaticShader();
-
-		Camera camera = new Camera();
-
-		shader.startUsingShader();
-		shader.loadProjectionMatrix(OpenGLEngine.PROJECTION_MATRIX_STACK.getCurrentMatrix());
-		shader.stopUsingShader();
-
 		//@formatter:off
 		float[] vertices = {
 			-0.5f, +0.5f, +0.0f,
@@ -102,45 +78,44 @@ public class UnnamedGame {
 		};		
 		//@formatter:on
 
-		RawModel model = loader.loadToVAO(vertices, textureCoords, indices);
+		ModelLoader loader = new ModelLoader();
+		StaticShader shader = new StaticShader();
+		Camera camera = new Camera();
+
 		Texture texture = null;
 		try {
-			texture = OpenGLEngine.TEXTURE_MANAGER.loadTexture("res/tex/panda.png");
+			texture = Engine.TEXTURE_MANAGER.loadTexture("res/tex/panda.png");
 		} catch (IOException e) {
 			e.printStackTrace();
-			OpenGLEngine.LOGGER.err("Could not load panda texture!");
+			Engine.LOGGER.err("Could not load panda texture!");
 		}
-		TexturedModel texturedModel = new TexturedModel(model, texture);
-		BaseEntity entity = new BaseEntity(texturedModel, new Vector3f(0, 0, -1), 0, 0, 0, 1);
-
-		// TODO: Enable transparency
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		TexturedModel model = new TexturedModel(loader.loadToVAO(vertices, textureCoords, indices, shader), texture);
+		// RawModel model = loader.loadToVAO(vertices, indices, shader);
+		VisibleEntity entity = new VisibleEntity(model, new Vector3f(0, 0, -1), 0, 0, 0, 1);
 
 		// Propper view loop stuff
 		double secsPerUpdate = 1.0 / 60.0;
 		long previous = System.nanoTime();
 		double steps = 0.0;
 
-		while (!this.glfwManager.getWindowShouldClose()) {
+		while (!Engine.GLFW_MANAGER.getWindowShouldClose()) {
+			/* update */
+
 			long now = System.nanoTime();
 			long elapsed = now - previous;
 			previous = now;
 			steps += elapsed / (Math.pow(10, 9));
 
 			while (steps >= secsPerUpdate) {
-				EventManager.dispatch(new UpdateEvent()); // TODO: delta time
+				Engine.EVENT_MANAGER.dispatch(new UpdateEvent());
 				steps -= secsPerUpdate;
 			}
 
-			entity.increasePosition(0, 0, 0);
-			entity.increaseRotation(0, 1, 0);
+			/* render */
+			glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+			entity.render();
 
-			renderer.prepare();
-			renderer.render(entity, shader);
-
-			this.glfwManager.swapBuffers();
-			this.glfwManager.pollEvents();
+			Engine.GLFW_MANAGER.swapBuffers();
 		}
 
 		// TODO: tmp
@@ -150,11 +125,6 @@ public class UnnamedGame {
 
 	public static void main(String argv[]) {
 		UnnamedGame game = new UnnamedGame();
-
-		try {
-			game.start();
-		} finally {
-			game.cleanup();
-		}
+		Engine.cleanup();
 	}
 }
