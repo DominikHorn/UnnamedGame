@@ -20,42 +20,9 @@ import com.openglengine.util.math.*;
  * @author Dominik
  *
  */
-public class UnnamedGame {
-	// TODO: tmp refactor
-	private static final float FOV = 70;
-	private static final float ASPECT = Engine.DEFAULT_SCREEN_WIDTH / Engine.DEFAULT_SCREEN_HEIGHT;
-	private static final float NEAR_PLANE = 0.1f;
-	private static final float FAR_PLANE = 1000f;
-
-	public UnnamedGame() {
-		Engine.loadDefaultEngineComponents();
-		this.initGL();
-		this.loop();
-	}
-
-	private void initGL() {
-		// This line is critical for LWJGL's interoperation with GLFW's
-		// OpenGL context, or any context that is managed externally.
-		// LWJGL detects the context that is current in the current thread,
-		// creates the GLCapabilities instance and makes the OpenGL
-		// bindings available for use.
-		GL.createCapabilities();
-
-		// Set the clear color
-		glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
-
-		// Setup projection matrix
-		Engine.PROJECTION_MATRIX_STACK.setPerspectiveMatrix(FOV, ASPECT, NEAR_PLANE, FAR_PLANE);
-
-		// Setup viewport
-		glViewport(0, 0, Engine.DEFAULT_SCREEN_WIDTH, Engine.DEFAULT_SCREEN_HEIGHT);
-
-		// Enable transparency
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	}
-
-	private void loop() {
+public class UnnamedGame extends Basic3DGame {
+	@Override
+	protected void loop() {
 		// TODO: tmp
 		//@formatter:off
 		float[] vertices = {
