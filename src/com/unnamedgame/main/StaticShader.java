@@ -9,6 +9,8 @@ public class StaticShader extends ShaderProgram {
 	private static final String FRAGMENT_SHADER_PATH = "res/shader/fragment.glsl";
 
 	private int location_transformationMatrix;
+	private int location_projectionMatrix;
+	private int location_viewMatrix;
 
 	public StaticShader() {
 		super(VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH);
@@ -23,10 +25,21 @@ public class StaticShader extends ShaderProgram {
 	@Override
 	protected void getAllUniformLocations() {
 		this.location_transformationMatrix = super.getUniformLocation("transformationMatrix");
+		this.location_projectionMatrix = super.getUniformLocation("projectionMatrix");
+		this.location_viewMatrix = super.getUniformLocation("viewMatrix");
 	}
 
+	@Override
 	public void loadTransformationMatrix(Matrix4f matrix) {
 		super.loadMatrix(this.location_transformationMatrix, matrix);
 	}
 
+	@Override
+	public void loadViewMatrix(Matrix4f matrix) {
+		super.loadMatrix(this.location_viewMatrix, matrix);
+	}
+
+	public void loadProjectionMatrix(Matrix4f matrix) {
+		super.loadMatrix(this.location_projectionMatrix, matrix);
+	}
 }
