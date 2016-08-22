@@ -1,0 +1,6 @@
+[submodule "OpenGLEngine"]
+	path = OpenGLEngine
+	url = git@github.com:DominikHorn/OpenGLEngine.git
+[submodule "subs/OpenGLEngine"]
+	path = subs/OpenGLEngine
+	url = git@github.com:DominikHorn/OpenGLEngine.git
