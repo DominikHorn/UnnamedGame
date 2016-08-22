@@ -7,7 +7,6 @@ import java.io.*;
 import org.lwjgl.opengl.*;
 
 import com.openglengine.core.*;
-import com.openglengine.entities.*;
 import com.openglengine.eventsystem.defaultevents.*;
 import com.openglengine.renderer.model.*;
 import com.openglengine.renderer.texture.*;
@@ -21,6 +20,10 @@ import com.openglengine.util.math.*;
  *
  */
 public class UnnamedGame extends Basic3DGame {
+	public UnnamedGame(float fov, float aspect, float near_plane, float far_plane) {
+		super(fov, aspect, near_plane, far_plane);
+	}
+
 	@Override
 	protected void loop() {
 		// TODO: tmp
@@ -58,7 +61,7 @@ public class UnnamedGame extends Basic3DGame {
 		}
 		TexturedModel model = new TexturedModel(loader.loadToVAO(vertices, textureCoords, indices, shader), texture);
 		// RawModel model = loader.loadToVAO(vertices, indices, shader);
-		VisibleEntity entity = new VisibleEntity(model, new Vector3f(0, 0, -1), 0, 0, 0, 1);
+		PandaEntity entity = new PandaEntity(model, new Vector3f(0, 0, -1), 0, 0, 0, 1);
 
 		// Propper view loop stuff
 		double secsPerUpdate = 1.0 / 60.0;
@@ -91,7 +94,9 @@ public class UnnamedGame extends Basic3DGame {
 	}
 
 	public static void main(String argv[]) {
-		UnnamedGame game = new UnnamedGame();
+		UnnamedGame game = new UnnamedGame(70f,
+				(float) Engine.DEFAULT_SCREEN_WIDTH / (float) Engine.DEFAULT_SCREEN_HEIGHT,
+				0.1f, 1000f);
 		Engine.cleanup();
 	}
 }
