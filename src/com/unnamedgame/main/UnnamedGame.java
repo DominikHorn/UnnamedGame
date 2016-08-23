@@ -1,12 +1,9 @@
 package com.unnamedgame.main;
 
-import java.io.*;
+import java.util.*;
 
 import com.openglengine.core.*;
-import com.openglengine.eventsystem.defaultevents.*;
-import com.openglengine.renderer.model.*;
-import com.openglengine.renderer.shader.*;
-import com.openglengine.renderer.texture.*;
+import com.openglengine.entitity.*;
 import com.openglengine.util.math.*;
 
 /**
@@ -26,52 +23,34 @@ public class UnnamedGame extends Basic3DGame {
 	private static final boolean FULLSCREEN = false;
 	private static final String WINDOW_TITLE = "Engine " + Engine.ENGINE_VERSION;
 
-	public UnnamedGame(float fov, float aspect, float near_plane, float far_plane) {
-		super(SCREEN_WIDTH, SCREEN_HEIGHT, FULLSCREEN, WINDOW_TITLE, fov, aspect, near_plane, far_plane);
+	private List<Entity> entities;
+
+	public UnnamedGame() {
+		super(SCREEN_WIDTH, SCREEN_HEIGHT, FULLSCREEN, WINDOW_TITLE, FOV, ASPECT, NEAR_PLANE, FAR_PLANE);
 	}
-
-
-	// TODO tmp
-	private ShaderProgram shader;
-	private ModelLoader loader;
-	private PandaEntity entity;
 
 	@Override
 	protected void setup() {
-		loader = new ModelLoader();
-		shader = new StaticShader();
+		this.entities = new ArrayList<>();
+		this.entities.add(EntityFactory.getStallEntity(new Vector3f(0, -3, -15), 0, 0, 0, 1));
+	}
 
-		Texture texture = null;
-		try {
-			texture = Engine.TEXTURE_MANAGER.loadTexture("res/model/stall.png");
-		} catch (IOException e) {
-			e.printStackTrace();
-			Engine.LOGGER.err("Could not load panda texture!");
+	@Override
+	protected void update() {
+		for (Entity entity : this.entities) {
+			entity.update();
 		}
-		TexturedModel model = new TexturedModel(loader.loadObjModelToVAO("res/model/stall.obj", shader), texture);
-		// RawModel model = loader.loadToVAO(vertices, indices, shader);
-		entity = new PandaEntity(model, new Vector3f(0, 0, -20), 0, 0, 0, 1);
 	}
 
-	@Override
-	protected void update(UpdateEvent e) {
-		// TODO: update all entities this way (?)
-	}
-
-	@Override
-	protected void render(RenderEvent e) {
-		entity.render();
+	public static void main(String argv[]) {
+		UnnamedGame game = new UnnamedGame();
+		game.cleanup();
+		Engine.cleanup();
 	}
 
 	@Override
 	protected void cleanup() {
-		loader.cleanup();
-		shader.cleanup();
+		// Do nothing
 	}
 
-	public static void main(String argv[]) {
-		UnnamedGame game = new UnnamedGame(FOV, ASPECT, NEAR_PLANE, FAR_PLANE);
-		game.cleanup();
-		Engine.cleanup();
-	}
 }

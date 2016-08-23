@@ -2,7 +2,7 @@ package com.unnamedgame.main;
 
 import com.openglengine.renderer.shader.*;
 
-public class StaticShader extends ShaderProgram {
+public class StaticShader extends Shader {
 
 	private static final String VERTEX_SHADER_PATH = "res/shader/vertex.glsl";
 	private static final String FRAGMENT_SHADER_PATH = "res/shader/fragment.glsl";
