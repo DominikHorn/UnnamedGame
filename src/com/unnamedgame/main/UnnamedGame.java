@@ -32,7 +32,7 @@ public class UnnamedGame extends Basic3DGame {
 	@Override
 	protected void setup() {
 		this.entities = new ArrayList<>();
-		this.entities.add(EntityFactory.getStallEntity(new Vector3f(0, -3, -15), 0, 0, 0, 1));
+		this.entities.add(CustomEntityFactory.getStallEntity(new Vector3f(0, -3, -15), 0, 0, 0, 1));
 	}
 
 	@Override
@@ -50,7 +50,7 @@ public class UnnamedGame extends Basic3DGame {
 
 	@Override
 	protected void cleanup() {
-		// Do nothing
+		this.entities.forEach(e -> e.cleanup());
 	}
 
 }
