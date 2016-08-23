@@ -13,8 +13,7 @@ public class PandaEntity extends VisibleEntity {
 
 	@Override
 	protected void update(UpdateEvent e) {
-		// this.position.z -= 0.01f;
-		this.rotZ += 0.2f;
+		this.rotY += 1.0f;
 	}
 
 }

@@ -23,7 +23,7 @@ public class UnnamedGame extends Basic3DGame {
 	private static final float ASPECT = (float) SCREEN_WIDTH / (float) SCREEN_HEIGHT;
 	private static final float NEAR_PLANE = 0.1f;
 	private static final float FAR_PLANE = 1000f;
-	private static final boolean FULLSCREEN = true;
+	private static final boolean FULLSCREEN = false;
 	private static final String WINDOW_TITLE = "Engine " + Engine.ENGINE_VERSION;
 
 	public UnnamedGame(float fov, float aspect, float near_plane, float far_plane) {
@@ -38,47 +38,24 @@ public class UnnamedGame extends Basic3DGame {
 
 	@Override
 	protected void setup() {
-		// TODO: tmp
-		//@formatter:off
-		float[] vertices = {
-			-0.5f, +0.5f, +0.0f,
-			-0.5f, -0.5f, +0.0f,
-			+0.5f, -0.5f, +0.0f,
-			+0.5f, +0.5f, +0.0f
-		};
-		
-		float[] textureCoords = {
-			0,0,
-			0,1,
-			1,1,
-			1,0
-		};
-		
-		int [] indices = {
-			0,1,3,
-			3,1,2,
-		};		
-		//@formatter:on
-
 		loader = new ModelLoader();
 		shader = new StaticShader();
 
 		Texture texture = null;
 		try {
-			texture = Engine.TEXTURE_MANAGER.loadTexture("res/tex/panda.png");
+			texture = Engine.TEXTURE_MANAGER.loadTexture("res/model/stall.png");
 		} catch (IOException e) {
 			e.printStackTrace();
 			Engine.LOGGER.err("Could not load panda texture!");
 		}
-		TexturedModel model = new TexturedModel(loader.loadToVAO(vertices, textureCoords, indices, shader), texture);
+		TexturedModel model = new TexturedModel(loader.loadObjModelToVAO("res/model/stall.obj", shader), texture);
 		// RawModel model = loader.loadToVAO(vertices, indices, shader);
-		entity = new PandaEntity(model, new Vector3f(0, 0, -1), 0, 0, 0, 1);
+		entity = new PandaEntity(model, new Vector3f(0, 0, -20), 0, 0, 0, 1);
 	}
 
 	@Override
 	protected void update(UpdateEvent e) {
-		// TODO Auto-generated method stub
-
+		// TODO: update all entities this way (?)
 	}
 
 	@Override
