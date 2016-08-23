@@ -11,10 +11,20 @@ import com.openglengine.eventsystem.defaultevents.*;
  *
  */
 public class RotatingComponent extends Component {
+	private float rotXDelta, rotYDelta, rotZDelta;
+
+	public RotatingComponent(float rotXDelta, float rotYDelta, float rotZDelta) {
+		super();
+		this.rotXDelta = rotXDelta;
+		this.rotYDelta = rotYDelta;
+		this.rotZDelta = rotZDelta;
+	}
 
 	@Override
 	public void update(Entity entity) {
-		entity.rotY += 0.4f;
+		entity.rotX += rotXDelta;
+		entity.rotY += rotYDelta;
+		entity.rotZ += rotZDelta;
 	}
 
 	@Override
