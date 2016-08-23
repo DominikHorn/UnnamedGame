@@ -1,16 +1,12 @@
 package com.unnamedgame.main;
 
-import static org.lwjgl.opengl.GL11.*;
-
 import java.io.*;
-
-import org.lwjgl.opengl.*;
 
 import com.openglengine.core.*;
 import com.openglengine.eventsystem.defaultevents.*;
 import com.openglengine.renderer.model.*;
+import com.openglengine.renderer.shader.*;
 import com.openglengine.renderer.texture.*;
-import com.openglengine.util.*;
 import com.openglengine.util.math.*;
 
 /**
@@ -20,12 +16,28 @@ import com.openglengine.util.math.*;
  *
  */
 public class UnnamedGame extends Basic3DGame {
+	// TODO: eventually to be moved to a config file
+	private static final int SCREEN_WIDTH = 1920;
+	private static final int SCREEN_HEIGHT = 1080;
+	private static final float FOV = 70f;
+	private static final float ASPECT = (float) SCREEN_WIDTH / (float) SCREEN_HEIGHT;
+	private static final float NEAR_PLANE = 0.1f;
+	private static final float FAR_PLANE = 1000f;
+	private static final boolean FULLSCREEN = true;
+	private static final String WINDOW_TITLE = "Engine " + Engine.ENGINE_VERSION;
+
 	public UnnamedGame(float fov, float aspect, float near_plane, float far_plane) {
-		super(fov, aspect, near_plane, far_plane);
+		super(SCREEN_WIDTH, SCREEN_HEIGHT, FULLSCREEN, WINDOW_TITLE, fov, aspect, near_plane, far_plane);
 	}
 
+
+	// TODO tmp
+	private ShaderProgram shader;
+	private ModelLoader loader;
+	private PandaEntity entity;
+
 	@Override
-	protected void loop() {
+	protected void setup() {
 		// TODO: tmp
 		//@formatter:off
 		float[] vertices = {
@@ -48,9 +60,8 @@ public class UnnamedGame extends Basic3DGame {
 		};		
 		//@formatter:on
 
-		ModelLoader loader = new ModelLoader();
-		StaticShader shader = new StaticShader();
-		Camera camera = new Camera();
+		loader = new ModelLoader();
+		shader = new StaticShader();
 
 		Texture texture = null;
 		try {
@@ -61,42 +72,29 @@ public class UnnamedGame extends Basic3DGame {
 		}
 		TexturedModel model = new TexturedModel(loader.loadToVAO(vertices, textureCoords, indices, shader), texture);
 		// RawModel model = loader.loadToVAO(vertices, indices, shader);
-		PandaEntity entity = new PandaEntity(model, new Vector3f(0, 0, -1), 0, 0, 0, 1);
+		entity = new PandaEntity(model, new Vector3f(0, 0, -1), 0, 0, 0, 1);
+	}
 
-		// Propper view loop stuff
-		double secsPerUpdate = 1.0 / 60.0;
-		long previous = System.nanoTime();
-		double steps = 0.0;
+	@Override
+	protected void update(UpdateEvent e) {
+		// TODO Auto-generated method stub
 
-		while (!Engine.GLFW_MANAGER.getWindowShouldClose()) {
-			/* update */
+	}
 
-			long now = System.nanoTime();
-			long elapsed = now - previous;
-			previous = now;
-			steps += elapsed / (Math.pow(10, 9));
+	@Override
+	protected void render(RenderEvent e) {
+		entity.render();
+	}
 
-			while (steps >= secsPerUpdate) {
-				Engine.EVENT_MANAGER.dispatch(new UpdateEvent());
-				steps -= secsPerUpdate;
-			}
-
-			/* render */
-			glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-			entity.render();
-
-			Engine.GLFW_MANAGER.swapBuffers();
-		}
-
-		// TODO: tmp
-		shader.cleanup();
+	@Override
+	protected void cleanup() {
 		loader.cleanup();
+		shader.cleanup();
 	}
 
 	public static void main(String argv[]) {
-		UnnamedGame game = new UnnamedGame(70f,
-				(float) Engine.DEFAULT_SCREEN_WIDTH / (float) Engine.DEFAULT_SCREEN_HEIGHT,
-				0.1f, 1000f);
+		UnnamedGame game = new UnnamedGame(FOV, ASPECT, NEAR_PLANE, FAR_PLANE);
+		game.cleanup();
 		Engine.cleanup();
 	}
 }
