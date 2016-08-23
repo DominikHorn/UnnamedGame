@@ -12,7 +12,7 @@ public class CustomEntityFactory {
 	private static final String MODEL_FOLDER = RES_FOLDER + "model/";
 	private static final String TEX_FOLDER = RES_FOLDER + "tex/";
 	private static final Shader shader = new StaticShader(SHADER_FOLDER + "vertex.glsl",
-			SHADER_FOLDER + "fragment.glsl");
+			SHADER_FOLDER + "fragment.glsl", 10f, 1f);
 
 	public static Entity getStallEntity(Vector3f position, float rotX, float rotY, float rotZ, float scale) {
 		try {
