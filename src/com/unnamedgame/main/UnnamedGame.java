@@ -34,17 +34,12 @@ public class UnnamedGame extends Basic3DGame {
 	private List<TexturedModel> loadedModels;
 	private List<VisibleEntity> visibleEntities;
 
-	private Display gameDisplay;
-
 	private Entity camera;
 
 	private StaticShader shader;
 
 	public UnnamedGame() throws IOException {
 		super(FOV, NEAR_PLANE, FAR_PLANE);
-
-		this.gameDisplay = new Display(SCREEN_WIDTH, SCREEN_HEIGHT, FULLSCREEN, WINDOW_BASETITLE);
-		this.gameDisplay.create();
 	}
 
 	@Override
@@ -95,7 +90,10 @@ public class UnnamedGame extends Basic3DGame {
 			entity.update();
 			Engine.getRenderManager().processEntity(entity);
 		}
-
+		
+		// Check whether or not we should quit
+		if (this.getGameDisplay().isCloseRequested() || Engine.getInputManager().isKeyDown(InputManager.KEY_ESC))
+			this.quit();
 	}
 
 	@Override
@@ -103,11 +101,6 @@ public class UnnamedGame extends Basic3DGame {
 		this.visibleEntities.forEach(e -> e.cleanup());
 		this.loadedModels.forEach(m -> m.cleanup());
 		this.shader.forceDelete();
-	}
-
-	@Override
-	protected Display getGameDisplay() {
-		return this.gameDisplay;
 	}
 
 	public static void main(String argv[]) {
@@ -119,5 +112,10 @@ public class UnnamedGame extends Basic3DGame {
 		}
 		game.cleanup();
 		Engine.cleanup();
+	}
+
+	@Override
+	protected Display setupDisplay() {
+		return new Display(SCREEN_WIDTH, SCREEN_HEIGHT, FULLSCREEN, WINDOW_BASETITLE);
 	}
 }
