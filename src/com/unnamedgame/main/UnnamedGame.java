@@ -6,7 +6,6 @@ import java.util.*;
 import com.openglengine.core.*;
 import com.openglengine.entitity.*;
 import com.openglengine.renderer.model.*;
-import com.openglengine.renderer.shader.*;
 import com.openglengine.util.Logger.*;
 import com.openglengine.util.math.*;
 
@@ -26,17 +25,23 @@ public class UnnamedGame extends Basic3DGame {
 	private static final int SCREEN_WIDTH = 1920;
 	private static final int SCREEN_HEIGHT = 1080;
 	private static final float FOV = 70f;
-	private static final float ASPECT = (float) SCREEN_WIDTH / (float) SCREEN_HEIGHT;
 	private static final float NEAR_PLANE = 0.1f;
 	private static final float FAR_PLANE = 1000f;
 	private static final boolean FULLSCREEN = false;
-	private static final String WINDOW_TITLE = "Engine " + Engine.ENGINE_VERSION;
+	private static final String WINDOW_BASETITLE = "Engine " + Engine.ENGINE_VERSION;
 
 	private List<TexturedModel> loadedModels;
 	private List<VisibleEntity> visibleEntities;
 
+	private Display gameDisplay;
+
+	private StaticShader shader;
+
 	public UnnamedGame() throws IOException {
-		super(SCREEN_WIDTH, SCREEN_HEIGHT, FULLSCREEN, WINDOW_TITLE, FOV, ASPECT, NEAR_PLANE, FAR_PLANE);
+		super(FOV, NEAR_PLANE, FAR_PLANE);
+
+		this.gameDisplay = new Display(SCREEN_WIDTH, SCREEN_HEIGHT, FULLSCREEN, WINDOW_BASETITLE);
+		this.gameDisplay.create();
 	}
 
 	@Override
@@ -45,17 +50,16 @@ public class UnnamedGame extends Basic3DGame {
 		this.visibleEntities = new ArrayList<>();
 		this.loadedModels = new ArrayList<>();
 
-		ShaderManager<StaticShader> shaderManager = new ShaderManager<>();
+		this.shader = new StaticShader();
+		this.shader.compileShaderFromFiles(SHADER_FOLDER + "vertex.glsl", SHADER_FOLDER + "fragment.glsl");
 
 		TexturedModel model1 = Engine.getModelManager().getTexturedModel(MODEL_FOLDER + "dragon.obj");
 		TexturedModel model2 = Engine.getModelManager().getTexturedModel(MODEL_FOLDER + "stall.obj");
 		try {
 			model1.setTexture(Engine.getTextureManager().loadTexture(TEX_FOLDER + "dragon.png"));
 			model2.setTexture(Engine.getTextureManager().loadTexture(TEX_FOLDER + "stall.png"));
-			model1.setShader(shaderManager.loadShaderFromFiles(StaticShader.class, SHADER_FOLDER + "vertex.glsl",
-					SHADER_FOLDER + "fragment.glsl"));
-			model2.setShader(shaderManager.loadShaderFromFiles(StaticShader.class, SHADER_FOLDER + "vertex.glsl",
-					SHADER_FOLDER + "fragment.glsl"));
+			model1.setShader(shader);
+			model2.setShader(shader);
 		} catch (IOException e) {
 			e.printStackTrace();
 			Engine.getLogger().err("could not load textures");
@@ -82,7 +86,7 @@ public class UnnamedGame extends Basic3DGame {
 	protected void update() {
 		for (VisibleEntity entity : this.visibleEntities) {
 			entity.update();
-			Engine.getRenderer().processEntity(entity);
+			Engine.getRenderManager().processEntity(entity);
 		}
 
 	}
@@ -91,6 +95,12 @@ public class UnnamedGame extends Basic3DGame {
 	protected void cleanup() {
 		this.visibleEntities.forEach(e -> e.cleanup());
 		this.loadedModels.forEach(m -> m.cleanup());
+		this.shader.forceDelete();
+	}
+
+	@Override
+	protected Display getGameDisplay() {
+		return this.gameDisplay;
 	}
 
 	public static void main(String argv[]) {
