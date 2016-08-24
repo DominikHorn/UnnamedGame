@@ -6,6 +6,7 @@ import java.util.*;
 import com.openglengine.core.*;
 import com.openglengine.entitity.*;
 import com.openglengine.renderer.model.*;
+import com.openglengine.util.*;
 import com.openglengine.util.Logger.*;
 import com.openglengine.util.math.*;
 
@@ -35,6 +36,8 @@ public class UnnamedGame extends Basic3DGame {
 
 	private Display gameDisplay;
 
+	private Entity camera;
+
 	private StaticShader shader;
 
 	public UnnamedGame() throws IOException {
@@ -49,6 +52,8 @@ public class UnnamedGame extends Basic3DGame {
 		Engine.getLogger().setLogLevel(LogLevel.LOG_DEBUG);
 		this.visibleEntities = new ArrayList<>();
 		this.loadedModels = new ArrayList<>();
+
+		this.camera = UtilityEngineFactory.getCamera(new Vector3f(), 0, 0, 0);
 
 		this.shader = new StaticShader();
 		this.shader.compileShaderFromFiles(SHADER_FOLDER + "vertex.glsl", SHADER_FOLDER + "fragment.glsl");
@@ -84,6 +89,8 @@ public class UnnamedGame extends Basic3DGame {
 
 	@Override
 	protected void update() {
+		this.camera.update();
+
 		for (VisibleEntity entity : this.visibleEntities) {
 			entity.update();
 			Engine.getRenderManager().processEntity(entity);
