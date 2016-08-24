@@ -49,8 +49,15 @@ public class UnnamedGame extends Basic3DGame {
 		this.loadedModels.add(model1);
 		this.loadedModels.add(model2);
 
-		this.visibleEntities.add(CustomEntityFactory.getStallEntity(new Vector3f(0, -3, -15), 0, 0, 0, 1));
-		this.visibleEntities.add(CustomEntityFactory.getDragonEntity(new Vector3f(0, 3, -15), 0, 0, 0, 1));
+		Random random = new Random();
+		for (int i = 0; i < 1000; i++) {
+			int posX = random.nextInt(400) - 200;
+			int posY = random.nextInt(400) - 200;
+			int posZ = random.nextInt(300) - 320;
+			this.visibleEntities.add(CustomEntityFactory.getStallEntity(new Vector3f(posX, posY, posZ), 0, 0, 0, 1));
+			// this.visibleEntities.add(CustomEntityFactory.getDragonEntity(new Vector3f(posX, posY, posZ), 0, 0, 0,
+			// 1));
+		}
 	}
 
 	@Override
