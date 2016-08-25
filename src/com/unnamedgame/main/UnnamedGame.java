@@ -69,12 +69,12 @@ public class UnnamedGame extends Basic3DGame {
 
 		Random random = new Random();
 		long numIndices = 0;
-		for (int i = 0; i < 40; i++) {
+		for (int i = 0; i < 5000; i++) {
 			int posX = random.nextInt(400) - 200;
 			int posY = random.nextInt(400) - 200;
 			int posZ = random.nextInt(300) - 320;
-			// VisibleEntity e = CustomEntityFactory.getStallEntity(new Vector3f(posX, posY, posZ), 0, 0, 0, 1);
-			VisibleEntity e = CustomEntityFactory.getDragonEntity(new Vector3f(posX, posY, posZ), 0, 0, 0, 1);
+			VisibleEntity e = CustomEntityFactory.getStallEntity(new Vector3f(posX, posY, posZ), 0, 0, 0, 1);
+			// VisibleEntity e = CustomEntityFactory.getDragonEntity(new Vector3f(posX, posY, posZ), 0, 0, 0, 1);
 			this.visibleEntities.add(e);
 			numIndices += e.getModel().getIndicesCount();
 		}
@@ -110,8 +110,6 @@ public class UnnamedGame extends Basic3DGame {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		game.cleanup();
-		Engine.cleanup();
 	}
 
 	@Override
