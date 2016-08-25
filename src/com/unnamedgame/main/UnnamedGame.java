@@ -92,7 +92,7 @@ public class UnnamedGame extends Basic3DGame {
 		}
 		
 		// Check whether or not we should quit
-		if (this.getGameDisplay().isCloseRequested() || Engine.getInputManager().isKeyDown(InputManager.KEY_ESC))
+		if (this.isQuitRequestedByEngine() || Engine.getInputManager().isKeyDown(InputManager.KEY_ESC))
 			this.quit();
 	}
 
