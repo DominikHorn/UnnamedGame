@@ -43,7 +43,6 @@ public class UnnamedGame extends Basic3DGame {
 
 	@Override
 	protected void setup() {
-		Engine.getLogger().setLogLevel(LogLevel.LOG_DEBUG);
 		this.visibleEntities = new ArrayList<>();
 		this.loadedModels = new ArrayList<>();
 
@@ -89,7 +88,7 @@ public class UnnamedGame extends Basic3DGame {
 			entity.update();
 			Engine.getRenderManager().processEntity(entity);
 		}
-		
+
 		// Check whether or not we should quit
 		if (this.isQuitRequestedByEngine() || Engine.getInputManager().isKeyDown(InputManager.KEY_ESC))
 			this.quit();
@@ -102,16 +101,17 @@ public class UnnamedGame extends Basic3DGame {
 		this.shader.forceDelete();
 	}
 
+	@Override
+	protected Display setupDisplay() {
+		return new Display(SCREEN_WIDTH, SCREEN_HEIGHT, FULLSCREEN, WINDOW_BASETITLE);
+	}
+
 	public static void main(String argv[]) {
+		Engine.getLogger().setLogLevel(LogLevel.LOG_DEBUG);
 		try {
 			new UnnamedGame();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	protected Display setupDisplay() {
-		return new Display(SCREEN_WIDTH, SCREEN_HEIGHT, FULLSCREEN, WINDOW_BASETITLE);
 	}
 }

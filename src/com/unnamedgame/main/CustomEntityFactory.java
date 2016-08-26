@@ -4,7 +4,7 @@ import java.util.*;
 
 import com.openglengine.core.*;
 import com.openglengine.entitity.*;
-import com.openglengine.entitity.component.utility.*;
+import com.openglengine.entitity.component.defaultcomponents.*;
 import com.openglengine.util.math.*;
 
 public class CustomEntityFactory {
