@@ -67,12 +67,12 @@ public class UnnamedGame extends Basic3DGame {
 
 		Random random = new Random();
 		long numIndices = 0;
-		for (int i = 0; i < 40; i++) {
-			int posX = random.nextInt(400) - 200;
-			int posY = random.nextInt(400) - 200;
-			int posZ = random.nextInt(300) - 320;
-			// VisibleEntity e = CustomEntityFactory.getStallEntity(new Vector3f(posX, posY, posZ), 0, 0, 0, 1);
-			VisibleEntity e = CustomEntityFactory.getDragonEntity(new Vector3f(posX, posY, posZ), 0, 0, 0, 1);
+		for (int i = 0; i < 6000; i++) {
+			int posX = random.nextInt(4000) - 2000;
+			int posY = random.nextInt(4000) - 2000;
+			int posZ = random.nextInt(3000) - 3020;
+			VisibleEntity e = CustomEntityFactory.getStallEntity(new Vector3f(posX, posY, posZ), 0, 0, 0, 1);
+			// VisibleEntity e = CustomEntityFactory.getDragonEntity(new Vector3f(posX, posY, posZ), 0, 0, 0, 1);
 			this.visibleEntities.add(e);
 			numIndices += e.getModel().getIndicesCount();
 		}
