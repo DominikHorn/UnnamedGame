@@ -4,6 +4,7 @@ import java.util.*;
 
 import com.openglengine.core.*;
 import com.openglengine.entitity.*;
+import com.openglengine.entitity.component.utility.*;
 import com.openglengine.util.math.*;
 
 public class CustomEntityFactory {
@@ -38,5 +39,10 @@ public class CustomEntityFactory {
 			Engine.getLogger().err("Could not create stall entity");
 		}
 		return null;
+	}
+
+	public static Entity getCamera(Vector3f position, int rotX, int rotY, int rotZ) {
+		return new Entity(position, rotX, rotY, rotZ).addComponent(new CameraInputComponent(5))
+				.addComponent(new CameraComponent());
 	}
 }

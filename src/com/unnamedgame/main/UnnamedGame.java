@@ -6,7 +6,6 @@ import java.util.*;
 import com.openglengine.core.*;
 import com.openglengine.entitity.*;
 import com.openglengine.renderer.model.*;
-import com.openglengine.util.*;
 import com.openglengine.util.Logger.*;
 import com.openglengine.util.math.*;
 
@@ -48,7 +47,7 @@ public class UnnamedGame extends Basic3DGame {
 		this.visibleEntities = new ArrayList<>();
 		this.loadedModels = new ArrayList<>();
 
-		this.camera = UtilityEngineFactory.getCamera(new Vector3f(), 0, 0, 0);
+		this.camera = CustomEntityFactory.getCamera(new Vector3f(), 0, 0, 0);
 
 		this.shader = new StaticShader();
 		this.shader.compileShaderFromFiles(SHADER_FOLDER + "vertex.glsl", SHADER_FOLDER + "fragment.glsl");
@@ -69,12 +68,12 @@ public class UnnamedGame extends Basic3DGame {
 
 		Random random = new Random();
 		long numIndices = 0;
-		for (int i = 0; i < 5000; i++) {
+		for (int i = 0; i < 40; i++) {
 			int posX = random.nextInt(400) - 200;
 			int posY = random.nextInt(400) - 200;
 			int posZ = random.nextInt(300) - 320;
-			VisibleEntity e = CustomEntityFactory.getStallEntity(new Vector3f(posX, posY, posZ), 0, 0, 0, 1);
-			// VisibleEntity e = CustomEntityFactory.getDragonEntity(new Vector3f(posX, posY, posZ), 0, 0, 0, 1);
+			// VisibleEntity e = CustomEntityFactory.getStallEntity(new Vector3f(posX, posY, posZ), 0, 0, 0, 1);
+			VisibleEntity e = CustomEntityFactory.getDragonEntity(new Vector3f(posX, posY, posZ), 0, 0, 0, 1);
 			this.visibleEntities.add(e);
 			numIndices += e.getModel().getIndicesCount();
 		}
@@ -104,9 +103,8 @@ public class UnnamedGame extends Basic3DGame {
 	}
 
 	public static void main(String argv[]) {
-		UnnamedGame game = null;
 		try {
-			game = new UnnamedGame();
+			new UnnamedGame();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
