@@ -5,6 +5,7 @@ import java.util.*;
 
 import com.openglengine.core.*;
 import com.openglengine.entitity.*;
+import com.openglengine.renderer.*;
 import com.openglengine.renderer.model.*;
 import com.openglengine.util.Logger.*;
 import com.openglengine.util.math.*;
@@ -48,7 +49,7 @@ public class UnnamedGame extends Basic3DGame {
 
 		this.camera = CustomEntityFactory.getCamera(new Vector3f(), 0, 0, 0);
 
-		this.shader = new StaticShader();
+		this.shader = new StaticShader(new LightSource(new Vector3f(), new Vector3f(1.0f, 1.0f, 1.0f)));
 		this.shader.compileShaderFromFiles(SHADER_FOLDER + "vertex.glsl", SHADER_FOLDER + "fragment.glsl");
 
 		TexturedModel model1 = Engine.getModelManager().getTexturedModel(MODEL_FOLDER + "dragon.obj");
