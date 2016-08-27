@@ -51,11 +51,13 @@ public class UnnamedGame extends Basic3DGame {
 		this.camera = CustomEntityFactory.getCamera(new Vector3f());
 
 		this.shader = new StandardShader(new LightSource(new Vector3f(), new Vector3f(1.0f, 1.0f, 1.0f), 100f));
-		this.shader.compileShaderFromFiles(SHADER_FOLDER + "vertex.glsl", SHADER_FOLDER + "fragment.glsl");
+		this.shader.compileShaderFromFiles(SHADER_FOLDER + "standard_vertex.glsl",
+				SHADER_FOLDER + "standard_fragment.glsl");
 
 		TexturedModel model1 = Engine.getModelManager().loadTexturedModel(MODEL_FOLDER + "dragon.obj");
 		TexturedModel model2 = Engine.getModelManager().loadTexturedModel(MODEL_FOLDER + "stall.obj");
 		try {
+			// TODO: refactor
 			model1.setTexture(Engine.getTextureManager().loadTexture(TEX_FOLDER + "dragon.png"));
 			model2.setTexture(Engine.getTextureManager().loadTexture(TEX_FOLDER + "stall.png"));
 			model1.setShader(shader);
@@ -68,13 +70,13 @@ public class UnnamedGame extends Basic3DGame {
 		this.loadedModels.add(model2);
 
 		Random random = new Random();
-		for (int i = 0; i < 300; i++) {
+		for (int i = 0; i < 40; i++) {
 			int posX = random.nextInt(200) - 100;
 			int posY = random.nextInt(200) - 100;
 			int posZ = random.nextInt(150) - 170;
 
-			Entity e = CustomEntityFactory.getStallEntity(new Vector3f(posX, posY, posZ));
-			// Entity e = CustomEntityFactory.getDragonEntity(new Vector3f(posX, posY, posZ));
+			// Entity e = CustomEntityFactory.getStallEntity(new Vector3f(posX, posY, posZ));
+			Entity e = CustomEntityFactory.getDragonEntity(new Vector3f(posX, posY, posZ));
 			this.visibleEntities.add(e);
 		}
 	}

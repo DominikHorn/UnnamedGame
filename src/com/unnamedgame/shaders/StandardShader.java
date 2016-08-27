@@ -50,7 +50,7 @@ public class StandardShader extends Shader {
 		super.loadVector3f(location_lightPosition, this.lightSource.getPosition());
 		super.loadVector3f(location_lightColor, this.lightSource.getColor());
 		super.loadFloat(location_lightBrightness, this.lightSource.getBrightness());
-		super.loadFloat(location_ambientBrightness, 0.05f); // TODO: refactor
+		super.loadFloat(location_ambientBrightness, 0.0f); // TODO: refactor
 	}
 
 	@Override

@@ -20,6 +20,11 @@ public class RotatingComponent extends Component {
 	}
 
 	@Override
+	public void init(Entity entity) {
+		// Do nothing
+	}
+
+	@Override
 	public void update(Entity entity) {
 		entity.rotation.addVector(this.deltaRotation);
 	}
@@ -30,8 +35,7 @@ public class RotatingComponent extends Component {
 	}
 
 	@Override
-	public void cleanup() {
+	public void cleanup(Entity entity) {
 		// No resources -> no cleanup
 	}
-
 }
