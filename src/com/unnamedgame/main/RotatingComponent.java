@@ -3,6 +3,7 @@ package com.unnamedgame.main;
 import com.openglengine.entitity.*;
 import com.openglengine.entitity.component.*;
 import com.openglengine.eventsystem.defaultevents.*;
+import com.openglengine.util.math.*;
 
 /**
  * Temporary component used for testing stuff
@@ -11,20 +12,17 @@ import com.openglengine.eventsystem.defaultevents.*;
  *
  */
 public class RotatingComponent extends Component {
-	private float rotXDelta, rotYDelta, rotZDelta;
+	private Vector3f deltaRotation;
 
-	public RotatingComponent(float rotXDelta, float rotYDelta, float rotZDelta) {
+	public RotatingComponent(Vector3f deltaRotation) {
 		super();
-		this.rotXDelta = rotXDelta;
-		this.rotYDelta = rotYDelta;
-		this.rotZDelta = rotZDelta;
+		this.deltaRotation = deltaRotation;
 	}
 
 	@Override
 	public void update(Entity entity) {
-		entity.rotX += rotXDelta;
-		entity.rotY += rotYDelta;
-		entity.rotZ += rotZDelta;
+		Vector3f entRot = (Vector3f) entity.getProperty(DefaultEntityProperties.PROPERTY_ROTATION).getValue();
+		entRot.addVector(this.deltaRotation);
 	}
 
 	@Override

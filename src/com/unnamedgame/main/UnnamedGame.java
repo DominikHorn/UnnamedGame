@@ -32,7 +32,7 @@ public class UnnamedGame extends Basic3DGame {
 	private static final String WINDOW_BASETITLE = "Engine " + Engine.ENGINE_VERSION;
 
 	private List<TexturedModel> loadedModels;
-	private List<VisibleEntity> visibleEntities;
+	private List<Entity> visibleEntities;
 
 	private Entity camera;
 
@@ -47,7 +47,7 @@ public class UnnamedGame extends Basic3DGame {
 		this.visibleEntities = new ArrayList<>();
 		this.loadedModels = new ArrayList<>();
 
-		this.camera = CustomEntityFactory.getCamera(new Vector3f(), 0, 0, 0);
+		this.camera = CustomEntityFactory.getCamera(new Vector3f());
 
 		this.shader = new StaticShader(new LightSource(new Vector3f(), new Vector3f(1.0f, 1.0f, 1.0f)));
 		this.shader.compileShaderFromFiles(SHADER_FOLDER + "vertex.glsl", SHADER_FOLDER + "fragment.glsl");
@@ -67,25 +67,21 @@ public class UnnamedGame extends Basic3DGame {
 		this.loadedModels.add(model2);
 
 		Random random = new Random();
-		long numIndices = 0;
 		for (int i = 0; i < 6000; i++) {
 			int posX = random.nextInt(4000) - 2000;
 			int posY = random.nextInt(4000) - 2000;
 			int posZ = random.nextInt(3000) - 3020;
-			VisibleEntity e = CustomEntityFactory.getStallEntity(new Vector3f(posX, posY, posZ), 0, 0, 0, 1);
-			// VisibleEntity e = CustomEntityFactory.getDragonEntity(new Vector3f(posX, posY, posZ), 0, 0, 0, 1);
+			Entity e = CustomEntityFactory.getStallEntity(new Vector3f(posX, posY, posZ));
+			// Entity e = CustomEntityFactory.getDragonEntity(new Vector3f(posX, posY, posZ));
 			this.visibleEntities.add(e);
-			numIndices += e.getModel().getIndicesCount();
 		}
-
-		Engine.getLogger().info(numIndices + " indicies are rendered each frame");
 	}
 
 	@Override
 	protected void update() {
 		this.camera.update();
 
-		for (VisibleEntity entity : this.visibleEntities) {
+		for (Entity entity : this.visibleEntities) {
 			entity.update();
 			Engine.getRenderManager().processEntity(entity);
 		}

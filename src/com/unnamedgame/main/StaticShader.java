@@ -1,7 +1,7 @@
 package com.unnamedgame.main;
 
+import com.openglengine.entitity.*;
 import com.openglengine.renderer.*;
-import com.openglengine.renderer.model.*;
 import com.openglengine.renderer.shader.*;
 
 public class StaticShader extends Shader {
@@ -42,9 +42,13 @@ public class StaticShader extends Shader {
 	}
 
 	@Override
-	public void uploadModelUniforms(TexturedModel model) {
-		super.uploadModelUniforms(model);
-		super.loadFloat(location_shineDamper, model.getTexture().getShineDamper());
-		super.loadFloat(location_reflectivity, model.getTexture().getReflectivity());
+	public void uploadEntityUniforms(Entity entity) {
+		super.uploadEntityUniforms(entity);
+
+		// Float shineDamper = (Float) entity.getValueProperty(CustomEntityProperties.PROPERTY_SHINE_DAMPER);
+		// Float reflectivity = (Float) entity.getValueProperty(CustomEntityProperties.PROPERTY_REFLECTIVITY);
+		//
+		// super.loadFloat(location_shineDamper, shineDamper);
+		// super.loadFloat(location_reflectivity, reflectivity);
 	}
 }

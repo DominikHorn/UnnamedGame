@@ -11,14 +11,18 @@ public class CustomEntityFactory {
 	private static Random random = new Random();
 	private static float ROTATION_SPEED_SCALE = 3f;
 
-	public static VisibleEntity getStallEntity(Vector3f position, float rotX, float rotY, float rotZ, float scale) {
+	public static Entity getStallEntity(Vector3f position) {
 		try {
-			float rotXDelta = random.nextFloat() * ROTATION_SPEED_SCALE;
-			float rotYDelta = random.nextFloat() * ROTATION_SPEED_SCALE;
-			float rotZDelta = random.nextFloat() * ROTATION_SPEED_SCALE;
-			return new VisibleEntity(Engine.getModelManager().getTexturedModel(UnnamedGame.MODEL_FOLDER + "stall.obj"),
-					position,
-					rotX, rotY, rotZ, scale).addComponent(new RotatingComponent(rotXDelta, rotYDelta, rotZDelta));
+			Vector3f rotation = new Vector3f();
+			rotation.x = random.nextFloat() * ROTATION_SPEED_SCALE;
+			rotation.y = random.nextFloat() * ROTATION_SPEED_SCALE;
+			rotation.z = random.nextFloat() * ROTATION_SPEED_SCALE;
+			return getNewDefaultEntity().addComponent(new RotatingComponent(rotation))
+					.putProperty(DefaultEntityProperties.PROPERTY_MODEL,
+							Engine.getModelManager().getTexturedModel("res/model/stall.obj"))
+					.putProperty(DefaultEntityProperties.PROPERTY_POSITION, position)
+					.putProperty(CustomEntityProperties.PROPERTY_REFLECTIVITY, 1f)
+					.putProperty(CustomEntityProperties.PROPERTY_SHINE_DAMPER, 10f);
 		} catch (Exception e) {
 			e.printStackTrace();
 			Engine.getLogger().err("Could not create stall entity");
@@ -26,23 +30,31 @@ public class CustomEntityFactory {
 		return null;
 	}
 
-	public static VisibleEntity getDragonEntity(Vector3f position, float rotX, float rotY, float rotZ, float scale) {
+	public static Entity getDragonEntity(Vector3f position) {
 		try {
-			float rotXDelta = random.nextFloat() * ROTATION_SPEED_SCALE;
-			float rotYDelta = random.nextFloat() * ROTATION_SPEED_SCALE;
-			float rotZDelta = random.nextFloat() * ROTATION_SPEED_SCALE;
-			return new VisibleEntity(Engine.getModelManager().getTexturedModel(UnnamedGame.MODEL_FOLDER + "dragon.obj"),
-					position, rotX, rotY, rotZ, scale)
-							.addComponent(new RotatingComponent(rotXDelta, rotYDelta, rotZDelta));
+			Vector3f rotation = new Vector3f();
+			rotation.x = random.nextFloat() * ROTATION_SPEED_SCALE;
+			rotation.y = random.nextFloat() * ROTATION_SPEED_SCALE;
+			rotation.z = random.nextFloat() * ROTATION_SPEED_SCALE;
+			return getNewDefaultEntity().addComponent(new RotatingComponent(rotation))
+					.putProperty(DefaultEntityProperties.PROPERTY_MODEL,
+							Engine.getModelManager().getTexturedModel("res/model/dragon.obj"))
+					.putProperty(DefaultEntityProperties.PROPERTY_POSITION, position)
+					.putProperty(CustomEntityProperties.PROPERTY_REFLECTIVITY, 1f)
+					.putProperty(CustomEntityProperties.PROPERTY_SHINE_DAMPER, 10f);
 		} catch (Exception e) {
 			e.printStackTrace();
-			Engine.getLogger().err("Could not create stall entity");
+			Engine.getLogger().err("Could not create dragon entity");
 		}
 		return null;
 	}
 
-	public static Entity getCamera(Vector3f position, int rotX, int rotY, int rotZ) {
-		return new Entity(position, rotX, rotY, rotZ).addComponent(new CameraInputComponent(5))
-				.addComponent(new CameraComponent());
+	public static Entity getCamera(Vector3f position) {
+		return getNewDefaultEntity().addComponent(new CameraInputComponent(5)).addComponent(new CameraComponent())
+				.putProperty(DefaultEntityProperties.PROPERTY_POSITION, position);
+	}
+
+	private static Entity getNewDefaultEntity() {
+		return new Entity().putEmptyDefaultProperties();
 	}
 }
