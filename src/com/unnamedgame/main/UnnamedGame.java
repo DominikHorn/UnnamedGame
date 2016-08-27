@@ -9,6 +9,7 @@ import com.openglengine.renderer.*;
 import com.openglengine.renderer.model.*;
 import com.openglengine.util.Logger.*;
 import com.openglengine.util.math.*;
+import com.unnamedgame.shaders.*;
 
 /**
  * Game entry point
@@ -35,8 +36,7 @@ public class UnnamedGame extends Basic3DGame {
 	private List<Entity> visibleEntities;
 
 	private Entity camera;
-
-	private StaticShader shader;
+	private StandardShader shader;
 
 	public UnnamedGame() throws IOException {
 		super(FOV, NEAR_PLANE, FAR_PLANE);
@@ -44,16 +44,17 @@ public class UnnamedGame extends Basic3DGame {
 
 	@Override
 	protected void setup() {
+		CustomEntityFactory.load();
 		this.visibleEntities = new ArrayList<>();
 		this.loadedModels = new ArrayList<>();
 
 		this.camera = CustomEntityFactory.getCamera(new Vector3f());
 
-		this.shader = new StaticShader(new LightSource(new Vector3f(), new Vector3f(1.0f, 1.0f, 1.0f)));
+		this.shader = new StandardShader(new LightSource(new Vector3f(), new Vector3f(1.0f, 1.0f, 1.0f), 100f));
 		this.shader.compileShaderFromFiles(SHADER_FOLDER + "vertex.glsl", SHADER_FOLDER + "fragment.glsl");
 
-		TexturedModel model1 = Engine.getModelManager().getTexturedModel(MODEL_FOLDER + "dragon.obj");
-		TexturedModel model2 = Engine.getModelManager().getTexturedModel(MODEL_FOLDER + "stall.obj");
+		TexturedModel model1 = Engine.getModelManager().loadTexturedModel(MODEL_FOLDER + "dragon.obj");
+		TexturedModel model2 = Engine.getModelManager().loadTexturedModel(MODEL_FOLDER + "stall.obj");
 		try {
 			model1.setTexture(Engine.getTextureManager().loadTexture(TEX_FOLDER + "dragon.png"));
 			model2.setTexture(Engine.getTextureManager().loadTexture(TEX_FOLDER + "stall.png"));
@@ -67,10 +68,11 @@ public class UnnamedGame extends Basic3DGame {
 		this.loadedModels.add(model2);
 
 		Random random = new Random();
-		for (int i = 0; i < 6000; i++) {
-			int posX = random.nextInt(4000) - 2000;
-			int posY = random.nextInt(4000) - 2000;
-			int posZ = random.nextInt(3000) - 3020;
+		for (int i = 0; i < 300; i++) {
+			int posX = random.nextInt(200) - 100;
+			int posY = random.nextInt(200) - 100;
+			int posZ = random.nextInt(150) - 170;
+
 			Entity e = CustomEntityFactory.getStallEntity(new Vector3f(posX, posY, posZ));
 			// Entity e = CustomEntityFactory.getDragonEntity(new Vector3f(posX, posY, posZ));
 			this.visibleEntities.add(e);
@@ -96,6 +98,7 @@ public class UnnamedGame extends Basic3DGame {
 		this.visibleEntities.forEach(e -> e.cleanup());
 		this.loadedModels.forEach(m -> m.cleanup());
 		this.shader.forceDelete();
+		CustomEntityFactory.cleanup();
 	}
 
 	@Override

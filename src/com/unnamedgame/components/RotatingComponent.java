@@ -1,4 +1,4 @@
-package com.unnamedgame.main;
+package com.unnamedgame.components;
 
 import com.openglengine.entitity.*;
 import com.openglengine.entitity.component.*;
@@ -21,8 +21,7 @@ public class RotatingComponent extends Component {
 
 	@Override
 	public void update(Entity entity) {
-		Vector3f entRot = (Vector3f) entity.getProperty(DefaultEntityProperties.PROPERTY_ROTATION).getValue();
-		entRot.addVector(this.deltaRotation);
+		entity.rotation.addVector(this.deltaRotation);
 	}
 
 	@Override

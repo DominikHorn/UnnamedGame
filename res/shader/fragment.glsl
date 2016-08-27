@@ -11,18 +11,17 @@ uniform sampler2D textureSampler;
 uniform vec3 lightColor = vec(1,1,1);
 uniform float shineDamper = 10f;
 uniform float reflectivity = 1f;
-uniform float ambientLight = 0.05f;
-uniform float lightBrightness = 300f;
+uniform float ambientBrightness = 0.05f;
+uniform float lightBrightness = 100f;
 
 void main(void) {
-	//float brightnessFactor = (lightBrightness / length(toLightVector));
-	float brightnessFactor = 1.0;
+	float brightnessFactor = (lightBrightness / length(toLightVector));
 	
 	vec3 unitNormal = normalize(surfaceNormal);
 	vec3 unitLightVector = normalize(toLightVector);
 	
 	float nDot = dot(unitNormal, unitLightVector);
-	float brightness = max(nDot, ambientLight);
+	float brightness = max(nDot, ambientBrightness);
 	vec3 diffuse = brightness * lightColor * brightnessFactor;
 
 	vec3 unitVectorToCamera = normalize(toCameraVector);
