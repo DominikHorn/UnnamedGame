@@ -6,6 +6,7 @@ import com.openglengine.core.*;
 import com.openglengine.entitity.*;
 import com.openglengine.entitity.component.defaultcomponents.*;
 import com.openglengine.renderer.model.*;
+import com.openglengine.renderer.shader.*;
 import com.openglengine.util.math.*;
 import com.unnamedgame.components.*;
 import com.unnamedgame.materials.*;
@@ -64,7 +65,14 @@ public class CustomEntityFactory {
 	}
 
 	public static Entity getCamera(Vector3f position) {
-		return new Entity(position).addComponent(new CameraInputComponent(5)).addComponent(new CameraComponent());
+		return new Entity(position).addComponent(new CameraInputComponent(1)).addComponent(new CameraComponent());
+	}
+
+	// TODO: refactor terrain code
+	public static Entity getTerrainChunk(int gridX, int gridZ, Shader terrainShader) {
+		Entity e = new Entity(new Vector3f(gridX, 0, gridZ));
+		e.addComponent(new TerrainChunkComponent(terrainShader));
+		return e;
 	}
 
 	public static void cleanup() {

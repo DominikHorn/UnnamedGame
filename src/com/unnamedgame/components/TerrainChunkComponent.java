@@ -1,24 +1,43 @@
 package com.unnamedgame.components;
 
+import java.io.*;
+
+import com.openglengine.core.*;
 import com.openglengine.entitity.*;
 import com.openglengine.entitity.component.*;
 import com.openglengine.eventsystem.defaultevents.*;
 import com.openglengine.renderer.model.*;
+import com.openglengine.renderer.shader.*;
+import com.openglengine.renderer.texture.*;
 import com.unnamedgame.main.*;
+import com.unnamedgame.materials.*;
 
+/** TODO REFACTOR */
 public class TerrainChunkComponent extends Component {
-	private int gridX;
-	private int gridZ;
+	// Just a reference so that we can set the terrains shader
+	private Shader shader;
 
-	public TerrainChunkComponent(int gridX, int gridZ) {
-		this.gridX = gridX;
-		this.gridZ = gridZ;
+	private Texture texture;
+
+	public TerrainChunkComponent(Shader shader) {
+		this.shader = shader;
 	}
-
 
 	@Override
 	public void init(Entity entity) {
-		entity.putProperty(DefaultEntityProperties.PROPERTY_MODEL, generateTerrain());
+		TexturedModel terrain = generateTerrain();
+
+		// TODO: refactor
+		try {
+			this.texture = Engine.getTextureManager().loadTexture("res/tex/terrain.png");
+			terrain.setTexture(this.texture);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		terrain.setMaterial(new TerrainMaterial());
+
+		terrain.setShader(this.shader);
+		entity.putProperty(DefaultEntityProperties.PROPERTY_MODEL, terrain);
 	}
 
 	@Override
@@ -34,6 +53,7 @@ public class TerrainChunkComponent extends Component {
 	@Override
 	public void cleanup(Entity entity) {
 		((Model) entity.getValueProperty(DefaultEntityProperties.PROPERTY_MODEL)).cleanup();
+		Engine.getTextureManager().cleanTexture(this.texture);
 	}
 
 	private TexturedModel generateTerrain() {

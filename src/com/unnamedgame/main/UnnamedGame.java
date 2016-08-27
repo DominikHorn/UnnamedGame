@@ -34,9 +34,11 @@ public class UnnamedGame extends Basic3DGame {
 
 	private List<TexturedModel> loadedModels;
 	private List<Entity> visibleEntities;
+	private List<Entity> terrainChunks;
 
 	private Entity camera;
-	private StandardShader shader;
+	private StandardShader standardShader;
+	private TerrainShader terrainShader;
 
 	public UnnamedGame() throws IOException {
 		super(FOV, NEAR_PLANE, FAR_PLANE);
@@ -47,12 +49,17 @@ public class UnnamedGame extends Basic3DGame {
 		CustomEntityFactory.load();
 		this.visibleEntities = new ArrayList<>();
 		this.loadedModels = new ArrayList<>();
-
+		this.terrainChunks = new ArrayList<>();
+		this.terrainShader = new TerrainShader(new LightSource(new Vector3f(), new Vector3f(1f, 1f, 1f), 200f));
+		this.standardShader = new StandardShader(new LightSource(new Vector3f(), new Vector3f(1.0f, 1.0f, 1.0f), 100f));
 		this.camera = CustomEntityFactory.getCamera(new Vector3f());
 
-		this.shader = new StandardShader(new LightSource(new Vector3f(), new Vector3f(1.0f, 1.0f, 1.0f), 100f));
-		this.shader.compileShaderFromFiles(SHADER_FOLDER + "standard_vertex.glsl",
+		this.setupTerrain();
+
+		this.standardShader.compileShaderFromFiles(SHADER_FOLDER + "standard_vertex.glsl",
 				SHADER_FOLDER + "standard_fragment.glsl");
+		this.terrainShader.compileShaderFromFiles(SHADER_FOLDER + "terrain_vertex.glsl",
+				SHADER_FOLDER + "terrain_fragment.glsl");
 
 		TexturedModel model1 = Engine.getModelManager().loadTexturedModel(MODEL_FOLDER + "dragon.obj");
 		TexturedModel model2 = Engine.getModelManager().loadTexturedModel(MODEL_FOLDER + "stall.obj");
@@ -60,8 +67,8 @@ public class UnnamedGame extends Basic3DGame {
 			// TODO: refactor
 			model1.setTexture(Engine.getTextureManager().loadTexture(TEX_FOLDER + "dragon.png"));
 			model2.setTexture(Engine.getTextureManager().loadTexture(TEX_FOLDER + "stall.png"));
-			model1.setShader(shader);
-			model2.setShader(shader);
+			model1.setShader(standardShader);
+			model2.setShader(standardShader);
 		} catch (IOException e) {
 			e.printStackTrace();
 			Engine.getLogger().err("could not load textures");
@@ -85,10 +92,14 @@ public class UnnamedGame extends Basic3DGame {
 	protected void update() {
 		this.camera.update();
 
+		// Add entities
 		for (Entity entity : this.visibleEntities) {
 			entity.update();
 			Engine.getRenderManager().processEntity(entity);
 		}
+
+		// Add terrain
+		this.terrainChunks.forEach(e -> Engine.getRenderManager().processEntity(e));
 
 		// Check whether or not we should quit
 		if (this.isQuitRequestedByEngine() || Engine.getInputManager().isKeyDown(InputManager.KEY_ESC))
@@ -99,13 +110,18 @@ public class UnnamedGame extends Basic3DGame {
 	protected void cleanup() {
 		this.visibleEntities.forEach(e -> e.cleanup());
 		this.loadedModels.forEach(m -> m.cleanup());
-		this.shader.forceDelete();
+		this.standardShader.forceDelete();
+		this.terrainShader.forceDelete();
 		CustomEntityFactory.cleanup();
 	}
 
 	@Override
 	protected Display setupDisplay() {
 		return new Display(SCREEN_WIDTH, SCREEN_HEIGHT, FULLSCREEN, WINDOW_BASETITLE);
+	}
+
+	private void setupTerrain() {
+		this.terrainChunks.add(CustomEntityFactory.getTerrainChunk(-400, -400, this.terrainShader));
 	}
 
 	public static void main(String argv[]) {

@@ -1,12 +1,9 @@
 package com.unnamedgame.shaders;
 
 import com.openglengine.renderer.*;
-import com.openglengine.renderer.material.*;
-import com.openglengine.renderer.model.*;
 import com.openglengine.renderer.shader.*;
-import com.unnamedgame.materials.*;
 
-public class StandardShader extends Shader {
+public class TerrainShader extends Shader {
 	/** uniform location of the lights position shader attrib */
 	private int location_lightPosition;
 
@@ -28,7 +25,7 @@ public class StandardShader extends Shader {
 	/** TODO: refactor */
 	private LightSource lightSource;
 
-	public StandardShader(LightSource lightSource) {
+	public TerrainShader(LightSource lightSource) {
 		this.lightSource = lightSource;
 	}
 
@@ -47,22 +44,10 @@ public class StandardShader extends Shader {
 	@Override
 	public void uploadGlobalUniforms() {
 		super.uploadGlobalUniforms();
+
 		super.loadVector3f(location_lightPosition, this.lightSource.getPosition());
 		super.loadVector3f(location_lightColor, this.lightSource.getColor());
 		super.loadFloat(location_lightBrightness, this.lightSource.getBrightness());
-		super.loadFloat(location_ambientBrightness, 0.0f); // TODO: refactor
-	}
-
-	@Override
-	public void uploadModelUniforms(Model model) {
-		super.uploadModelUniforms(model);
-
-		Material material = model.getMaterial();
-
-		Float shineDamper = (Float) material.getValueProperty(StallMaterial.PROPERTY_SHINE_DAMPER);
-		Float reflectivity = (Float) material.getValueProperty(StallMaterial.PROPERTY_REFLECTIVITY);
-
-		super.loadFloat(location_shineDamper, shineDamper);
-		super.loadFloat(location_reflectivity, reflectivity);
+		super.loadFloat(location_ambientBrightness, 1f); // TODO: refactor
 	}
 }
