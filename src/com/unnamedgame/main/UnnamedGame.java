@@ -5,11 +5,8 @@ import java.util.*;
 
 import com.openglengine.core.*;
 import com.openglengine.entitity.*;
-import com.openglengine.renderer.*;
-import com.openglengine.renderer.model.*;
 import com.openglengine.util.Logger.*;
 import com.openglengine.util.math.*;
-import com.unnamedgame.shaders.*;
 
 /**
  * Game entry point
@@ -18,11 +15,6 @@ import com.unnamedgame.shaders.*;
  *
  */
 public class UnnamedGame extends Basic3DGame {
-	public static String RES_FOLDER = "res/";
-	public static String MODEL_FOLDER = RES_FOLDER + "model/";
-	public static String TEX_FOLDER = RES_FOLDER + "tex/";
-	public static String SHADER_FOLDER = RES_FOLDER + "shader/";
-
 	// TODO: eventually to be moved to a config file
 	private static final int SCREEN_WIDTH = 1920;
 	private static final int SCREEN_HEIGHT = 1080;
@@ -32,13 +24,10 @@ public class UnnamedGame extends Basic3DGame {
 	private static final boolean FULLSCREEN = false;
 	private static final String WINDOW_BASETITLE = "Engine " + Engine.ENGINE_VERSION;
 
-	private List<TexturedModel> loadedModels;
-	private List<Entity> visibleEntities;
+	private List<Entity> terrainDecoration;
 	private List<Entity> terrainChunks;
 
 	private Entity camera;
-	private StandardShader standardShader;
-	private TerrainShader terrainShader;
 
 	public UnnamedGame() throws IOException {
 		super(FOV, NEAR_PLANE, FAR_PLANE);
@@ -46,54 +35,42 @@ public class UnnamedGame extends Basic3DGame {
 
 	@Override
 	protected void setup() {
-		CustomEntityFactory.load();
-		this.visibleEntities = new ArrayList<>();
-		this.loadedModels = new ArrayList<>();
+		EntityFactory.load();
+		this.terrainDecoration = new ArrayList<>();
 		this.terrainChunks = new ArrayList<>();
-		this.terrainShader = new TerrainShader(new LightSource(new Vector3f(), new Vector3f(1f, 1f, 1f), 200f));
-		this.standardShader = new StandardShader(new LightSource(new Vector3f(), new Vector3f(1.0f, 1.0f, 1.0f), 100f));
-		this.camera = CustomEntityFactory.getCamera(new Vector3f());
+		this.camera = EntityFactory.getCamera(new Vector3f());
 
 		this.setupTerrain();
-
-		this.standardShader.compileShaderFromFiles(SHADER_FOLDER + "standard_vertex.glsl",
-				SHADER_FOLDER + "standard_fragment.glsl");
-		this.terrainShader.compileShaderFromFiles(SHADER_FOLDER + "terrain_vertex.glsl",
-				SHADER_FOLDER + "terrain_fragment.glsl");
-
-		TexturedModel model1 = Engine.getModelManager().loadTexturedModel(MODEL_FOLDER + "dragon.obj");
-		TexturedModel model2 = Engine.getModelManager().loadTexturedModel(MODEL_FOLDER + "stall.obj");
-		try {
-			// TODO: refactor
-			model1.setTexture(Engine.getTextureManager().loadTexture(TEX_FOLDER + "dragon.png"));
-			model2.setTexture(Engine.getTextureManager().loadTexture(TEX_FOLDER + "stall.png"));
-			model1.setShader(standardShader);
-			model2.setShader(standardShader);
-		} catch (IOException e) {
-			e.printStackTrace();
-			Engine.getLogger().err("could not load textures");
-		}
-		this.loadedModels.add(model1);
-		this.loadedModels.add(model2);
-
 		Random random = new Random();
-		for (int i = 0; i < 40; i++) {
-			int posX = random.nextInt(200) - 100;
-			int posY = random.nextInt(200) - 100;
-			int posZ = random.nextInt(150) - 170;
 
-			// Entity e = CustomEntityFactory.getStallEntity(new Vector3f(posX, posY, posZ));
-			Entity e = CustomEntityFactory.getDragonEntity(new Vector3f(posX, posY, posZ));
-			this.visibleEntities.add(e);
+		// Add 200 ferns
+		for (int i = 0; i < 200; i++) {
+			float posX = (random.nextInt((int) (Terrain.CHUNK_SIZE * 2)) - Terrain.CHUNK_SIZE);
+			float posY = 0;
+			float posZ = random.nextInt((int) (Terrain.CHUNK_SIZE * 2)) - Terrain.CHUNK_SIZE;
+
+			Entity e = EntityFactory.getEntityByName(new Vector3f(posX, posY, posZ), new Vector3f(1, 1, 1), "fern");
+			this.terrainDecoration.add(e);
+		}
+
+		// Add 300 trees
+		for (int i = 0; i < 300; i++) {
+			float posX = (random.nextInt((int) (Terrain.CHUNK_SIZE * 2)) - Terrain.CHUNK_SIZE);
+			float posY = 0;
+			float posZ = random.nextInt((int) (Terrain.CHUNK_SIZE * 2)) - Terrain.CHUNK_SIZE;
+
+			Entity e = EntityFactory.getEntityByName(new Vector3f(posX, posY, posZ), new Vector3f(10, 10, 10), "tree");
+			this.terrainDecoration.add(e);
 		}
 	}
+
 
 	@Override
 	protected void update() {
 		this.camera.update();
 
 		// Add entities
-		for (Entity entity : this.visibleEntities) {
+		for (Entity entity : this.terrainDecoration) {
 			entity.update();
 			Engine.getRenderManager().processEntity(entity);
 		}
@@ -108,11 +85,9 @@ public class UnnamedGame extends Basic3DGame {
 
 	@Override
 	protected void cleanup() {
-		this.visibleEntities.forEach(e -> e.cleanup());
-		this.loadedModels.forEach(m -> m.cleanup());
-		this.standardShader.forceDelete();
-		this.terrainShader.forceDelete();
-		CustomEntityFactory.cleanup();
+		this.terrainDecoration.forEach(e -> e.cleanup());
+		this.terrainChunks.forEach(t -> t.cleanup());
+		EntityFactory.cleanup();
 	}
 
 	@Override
@@ -121,7 +96,10 @@ public class UnnamedGame extends Basic3DGame {
 	}
 
 	private void setupTerrain() {
-		this.terrainChunks.add(CustomEntityFactory.getTerrainChunk(-400, -400, this.terrainShader));
+		this.terrainChunks.add(EntityFactory.getTerrainChunk(-1, -1));
+		this.terrainChunks.add(EntityFactory.getTerrainChunk(-1, 0));
+		this.terrainChunks.add(EntityFactory.getTerrainChunk(0, -1));
+		this.terrainChunks.add(EntityFactory.getTerrainChunk(0, 0));
 	}
 
 	public static void main(String argv[]) {

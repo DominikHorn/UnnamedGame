@@ -1,7 +1,5 @@
 package com.unnamedgame.components;
 
-import java.io.*;
-
 import com.openglengine.core.*;
 import com.openglengine.entitity.*;
 import com.openglengine.entitity.component.*;
@@ -28,13 +26,10 @@ public class TerrainChunkComponent extends Component {
 		TexturedModel terrain = generateTerrain();
 
 		// TODO: refactor
-		try {
-			this.texture = Engine.getTextureManager().loadTexture("res/tex/terrain.png");
-			terrain.setTexture(this.texture);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		terrain.setMaterial(new TerrainMaterial());
+		this.texture = Engine.getTextureManager().loadTexture("res/tex/terrain.png");
+		terrain.setTexture(this.texture);
+
+		terrain.setMaterial(new DynamicMaterial(0, 1, false));
 
 		terrain.setShader(this.shader);
 		entity.putProperty(DefaultEntityProperties.PROPERTY_MODEL, terrain);
@@ -52,7 +47,7 @@ public class TerrainChunkComponent extends Component {
 
 	@Override
 	public void cleanup(Entity entity) {
-		((Model) entity.getValueProperty(DefaultEntityProperties.PROPERTY_MODEL)).cleanup();
+		((Model) entity.getPropertyValue(DefaultEntityProperties.PROPERTY_MODEL)).cleanup();
 		Engine.getTextureManager().cleanTexture(this.texture);
 	}
 

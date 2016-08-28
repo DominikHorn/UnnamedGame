@@ -25,6 +25,9 @@ public class StandardShader extends Shader {
 	/** uniform location of light source brightness */
 	private int location_lightBrightness;
 
+	/** uniform location of light source brightness */
+	private int location_transparent;
+
 	/** TODO: refactor */
 	private LightSource lightSource;
 
@@ -42,15 +45,16 @@ public class StandardShader extends Shader {
 		location_reflectivity = super.getUniformLocation("reflectivity");
 		location_ambientBrightness = super.getUniformLocation("ambientBrightness");
 		location_lightBrightness = super.getUniformLocation("lightBrightness");
+		location_transparent = super.getUniformLocation("transparent");
 	}
 
 	@Override
 	public void uploadGlobalUniforms() {
 		super.uploadGlobalUniforms();
-		super.loadVector3f(location_lightPosition, this.lightSource.getPosition());
-		super.loadVector3f(location_lightColor, this.lightSource.getColor());
-		super.loadFloat(location_lightBrightness, this.lightSource.getBrightness());
-		super.loadFloat(location_ambientBrightness, 0.0f); // TODO: refactor
+		super.loadVector3f(location_lightPosition, this.lightSource.position);
+		super.loadVector3f(location_lightColor, this.lightSource.color);
+		super.loadFloat(location_lightBrightness, this.lightSource.brightness);
+		super.loadFloat(location_ambientBrightness, 0.1f); // TODO: refactor
 	}
 
 	@Override
@@ -59,10 +63,12 @@ public class StandardShader extends Shader {
 
 		Material material = model.getMaterial();
 
-		Float shineDamper = (Float) material.getValueProperty(StallMaterial.PROPERTY_SHINE_DAMPER);
-		Float reflectivity = (Float) material.getValueProperty(StallMaterial.PROPERTY_REFLECTIVITY);
+		Float shineDamper = (Float) material.getPropertyValue(DynamicMaterial.PROPERTY_SHINE_DAMPER);
+		Float reflectivity = (Float) material.getPropertyValue(DynamicMaterial.PROPERTY_REFLECTIVITY);
+		Boolean transparent = (Boolean) material.getPropertyValue(DynamicMaterial.PROPERTY_TRANSPARENCY);
 
 		super.loadFloat(location_shineDamper, shineDamper);
 		super.loadFloat(location_reflectivity, reflectivity);
+		super.loadFloat(location_transparent, transparent == false ? 0 : 1);
 	}
 }
