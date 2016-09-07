@@ -1,38 +1,29 @@
 package com.unnamedgame.components;
 
-import com.openglengine.core.*;
 import com.openglengine.entitity.*;
 import com.openglengine.entitity.component.*;
 import com.openglengine.eventsystem.defaultevents.*;
 import com.openglengine.renderer.model.*;
 import com.openglengine.renderer.shader.*;
-import com.openglengine.renderer.texture.*;
 import com.unnamedgame.main.*;
 import com.unnamedgame.materials.*;
+import com.unnamedgame.models.*;
 
 /** TODO REFACTOR */
 public class TerrainChunkComponent extends Component {
 	// Just a reference so that we can set the terrains shader
 	private Shader shader;
 
-	private Texture texture;
+	private TerrainMaterial terrainMaterial;
 
 	public TerrainChunkComponent(Shader shader) {
 		this.shader = shader;
+		this.terrainMaterial = new TerrainMaterial(0, 1);
 	}
 
 	@Override
 	public void init(Entity entity) {
-		TexturedModel terrain = generateTerrain();
-
-		// TODO: refactor
-		this.texture = Engine.getTextureManager().loadTexture("res/tex/terrain.png");
-		terrain.setTexture(this.texture);
-
-		terrain.setMaterial(new DynamicMaterial(0, 1, false));
-
-		terrain.setShader(this.shader);
-		entity.putProperty(DefaultEntityProperties.PROPERTY_MODEL, terrain);
+		entity.putProperty(RenderableEntityProperties.PROPERTY_MODEL, generateTerrain());
 	}
 
 	@Override
@@ -47,11 +38,10 @@ public class TerrainChunkComponent extends Component {
 
 	@Override
 	public void cleanup(Entity entity) {
-		((Model) entity.getPropertyValue(DefaultEntityProperties.PROPERTY_MODEL)).cleanup();
-		Engine.getTextureManager().cleanTexture(this.texture);
+		((Model) entity.getPropertyValue(RenderableEntityProperties.PROPERTY_MODEL)).cleanup();
 	}
 
-	private TexturedModel generateTerrain() {
+	private Model generateTerrain() {
 		int count = Terrain.VERTEX_COUNT * Terrain.VERTEX_COUNT;
 		float[] vertices = new float[count * 3];
 		float[] normals = new float[count * 3];
@@ -86,6 +76,10 @@ public class TerrainChunkComponent extends Component {
 				indices[pointer++] = bottomRight;
 			}
 		}
-		return new TexturedModel(vertices, textureCoords, normals, indices);
+
+		// TODO: refactor
+		return new TerrainChunkModel(this.shader, this.terrainMaterial, vertices,
+				textureCoords,
+				normals, indices);
 	}
 }

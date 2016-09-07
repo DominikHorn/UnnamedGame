@@ -2,6 +2,8 @@ package com.unnamedgame.main;
 
 import java.util.*;
 
+import org.lwjgl.opengl.*;
+
 import com.openglengine.core.*;
 import com.openglengine.entitity.*;
 import com.openglengine.entitity.component.defaultcomponents.*;
@@ -10,6 +12,7 @@ import com.openglengine.renderer.model.*;
 import com.openglengine.util.math.*;
 import com.unnamedgame.components.*;
 import com.unnamedgame.materials.*;
+import com.unnamedgame.models.*;
 import com.unnamedgame.shaders.*;
 
 public class EntityFactory {
@@ -21,51 +24,62 @@ public class EntityFactory {
 	private static Random random = new Random();
 	private static float ROTATION_FLOAT_SCALE = (float) (180.0 / Math.PI);
 
-	private static StandardShader standardShader;
+	private static DynamicShader standardShader;
 	private static TerrainShader terrainShader;
-	private static LightSource lightSource;
+	private static LightSource lightSource = new LightSource(new Vector3f(0, 500f, 0), new Vector3f(1.0f, 1.0f, 1.0f),
+			0f);
+	// private static Vector3f skyColor = new Vector3f(0.478f, 1f, 0.952f);
+	private static Vector3f skyColor = new Vector3f(1f, 1f, 1f);
 
-	private static Map<String, TexturedModel> models = new HashMap<>();
+	private static Map<String, SimpleTexturedModel> models = new HashMap<>();
 
 	public static void load() {
-		lightSource = new LightSource(new Vector3f(0, 500f, 0), new Vector3f(1.0f, 1.0f, 1.0f), 2000f);
-		terrainShader = new TerrainShader(lightSource);
-		standardShader = new StandardShader(lightSource);
+		// TODO: refactor
+		GL11.glClearColor(skyColor.x, skyColor.y, skyColor.z, 1.0f);
+
+		terrainShader = new TerrainShader(lightSource, skyColor);
+		standardShader = new DynamicShader(lightSource, skyColor);
 		standardShader.compileShaderFromFiles(SHADER_FOLDER + "standard_vertex.glsl",
 				SHADER_FOLDER + "standard_fragment.glsl");
 		terrainShader.compileShaderFromFiles(SHADER_FOLDER + "terrain_vertex.glsl",
 				SHADER_FOLDER + "terrain_fragment.glsl");
 
-		TexturedModel stallModel = Engine.getModelManager().loadTexturedModel(MODEL_FOLDER + "stall.obj");
-		stallModel.setMaterial(new DynamicMaterial(0, 1, false));
-		stallModel.setTexture(Engine.getTextureManager().loadTexture(TEX_FOLDER + "stall.png"));
-		stallModel.setShader(standardShader);
+		ModelData stallModelData = Engine.getModelDataManager().loadModelData(MODEL_FOLDER + "stall.obj");
+		SimpleTexturedModel stallModel = new SimpleTexturedModel(TEX_FOLDER + "stall.png", standardShader,
+				new DynamicMaterial(0, 1, false, false), stallModelData.getVertices(),
+				stallModelData.getTextureCoords(), stallModelData.getNormals(), stallModelData.getIndices());
 
-		TexturedModel dragonModel = Engine.getModelManager().loadTexturedModel(MODEL_FOLDER + "dragon.obj");
-		dragonModel.setMaterial(new DynamicMaterial(1, 50, false));
-		dragonModel.setTexture(Engine.getTextureManager().loadTexture(TEX_FOLDER + "dragon.png"));
-		dragonModel.setShader(standardShader);
+		ModelData dragonModelData = Engine.getModelDataManager().loadModelData(MODEL_FOLDER + "dragon.obj");
+		SimpleTexturedModel dragonModel = new SimpleTexturedModel(TEX_FOLDER + "dragon.png", standardShader,
+				new DynamicMaterial(0, 1, false, false), dragonModelData.getVertices(),
+				dragonModelData.getTextureCoords(), dragonModelData.getNormals(), dragonModelData.getIndices());
 
-		TexturedModel bunnyModel = Engine.getModelManager().loadTexturedModel(MODEL_FOLDER + "bunny.obj");
-		bunnyModel.setMaterial(new DynamicMaterial(1, 3, false));
-		bunnyModel.setTexture(Engine.getTextureManager().loadTexture(TEX_FOLDER + "dragon.png"));
-		bunnyModel.setShader(standardShader);
+		ModelData bunnyModelData = Engine.getModelDataManager().loadModelData(MODEL_FOLDER + "bunny.obj");
+		SimpleTexturedModel bunnyModel = new SimpleTexturedModel(TEX_FOLDER + "bunny.png", standardShader,
+				new DynamicMaterial(0, 1, false, false), bunnyModelData.getVertices(),
+				bunnyModelData.getTextureCoords(), bunnyModelData.getNormals(), bunnyModelData.getIndices());
 
-		TexturedModel fernModel = Engine.getModelManager().loadTexturedModel(MODEL_FOLDER + "fern.obj");
-		fernModel.setMaterial(new DynamicMaterial(0, 1, true));
-		fernModel.setTexture(Engine.getTextureManager().loadTexture(TEX_FOLDER + "fern.png"));
-		fernModel.setShader(standardShader);
+		ModelData fernModelData = Engine.getModelDataManager().loadModelData(MODEL_FOLDER + "fern.obj");
+		SimpleTexturedModel fernModel = new SimpleTexturedModel(TEX_FOLDER + "fern.png", standardShader,
+				new DynamicMaterial(0, 1, true, false), fernModelData.getVertices(), fernModelData.getTextureCoords(),
+				fernModelData.getNormals(), fernModelData.getIndices());
 
-		TexturedModel treeModel = Engine.getModelManager().loadTexturedModel(MODEL_FOLDER + "tree.obj");
-		treeModel.setMaterial(new DynamicMaterial(0, 1, true));
-		treeModel.setTexture(Engine.getTextureManager().loadTexture(TEX_FOLDER + "tree.png"));
-		treeModel.setShader(standardShader);
+		ModelData grassModelData = Engine.getModelDataManager().loadModelData(MODEL_FOLDER + "grassModel.obj");
+		SimpleTexturedModel grassModel = new SimpleTexturedModel(TEX_FOLDER + "grassTexture.png", standardShader,
+				new DynamicMaterial(0, 1, true, true), grassModelData.getVertices(), grassModelData.getTextureCoords(),
+				grassModelData.getNormals(), grassModelData.getIndices());
+
+		ModelData treeModelData = Engine.getModelDataManager().loadModelData(MODEL_FOLDER + "tree.obj");
+		SimpleTexturedModel treeModel = new SimpleTexturedModel(TEX_FOLDER + "tree.png", standardShader,
+				new DynamicMaterial(0, 1, false, false), treeModelData.getVertices(), treeModelData.getTextureCoords(),
+				treeModelData.getNormals(), treeModelData.getIndices());
 
 		models.put("stall", stallModel);
 		models.put("dragon", dragonModel);
 		models.put("bunny", bunnyModel);
 		models.put("fern", fernModel);
 		models.put("tree", treeModel);
+		models.put("grass", grassModel);
 	}
 
 	public static Entity getEntityByName(Vector3f position, Vector3f scale, String modelname) {
@@ -74,7 +88,7 @@ public class EntityFactory {
 		rotation.y = random.nextFloat() * 360 * ROTATION_FLOAT_SCALE;
 		rotation.z = 0;
 		Entity e = new Entity(position, rotation, scale);
-		e.putProperty(DefaultEntityProperties.PROPERTY_MODEL, models.get(modelname));
+		e.putProperty(RenderableEntityProperties.PROPERTY_MODEL, models.get(modelname));
 
 		return e;
 	}

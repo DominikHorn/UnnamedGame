@@ -41,7 +41,7 @@ public class UnnamedGame extends Basic3DGame {
 		this.camera = EntityFactory.getCamera(new Vector3f());
 
 		this.setupTerrain();
-		Random random = new Random();
+		Random random = new Random(System.currentTimeMillis());
 
 		// Add 200 ferns
 		for (int i = 0; i < 200; i++) {
@@ -54,12 +54,23 @@ public class UnnamedGame extends Basic3DGame {
 		}
 
 		// Add 300 trees
-		for (int i = 0; i < 300; i++) {
+		for (int i = 0; i < 30; i++) {
 			float posX = (random.nextInt((int) (Terrain.CHUNK_SIZE * 2)) - Terrain.CHUNK_SIZE);
 			float posY = 0;
 			float posZ = random.nextInt((int) (Terrain.CHUNK_SIZE * 2)) - Terrain.CHUNK_SIZE;
 
-			Entity e = EntityFactory.getEntityByName(new Vector3f(posX, posY, posZ), new Vector3f(10, 10, 10), "tree");
+			Entity e = EntityFactory.getEntityByName(new Vector3f(posX, posY, posZ), new Vector3f(10, 10, 10),
+					"tree");
+			this.terrainDecoration.add(e);
+		}
+
+		// Add 400 grass
+		for (int i = 0; i < 400; i++) {
+			float posX = random.nextFloat() * Terrain.CHUNK_SIZE * 2 - Terrain.CHUNK_SIZE;
+			float posY = 0;
+			float posZ = random.nextFloat() * Terrain.CHUNK_SIZE * 2 - Terrain.CHUNK_SIZE;
+
+			Entity e = EntityFactory.getEntityByName(new Vector3f(posX, posY, posZ), new Vector3f(2, 2, 2), "grass");
 			this.terrainDecoration.add(e);
 		}
 	}
