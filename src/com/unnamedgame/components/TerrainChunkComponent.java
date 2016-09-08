@@ -2,7 +2,6 @@ package com.unnamedgame.components;
 
 import com.openglengine.entitity.*;
 import com.openglengine.entitity.component.*;
-import com.openglengine.eventsystem.defaultevents.*;
 import com.openglengine.renderer.model.*;
 import com.openglengine.renderer.shader.*;
 import com.unnamedgame.main.*;
@@ -29,11 +28,6 @@ public class TerrainChunkComponent extends EntityComponent {
 	@Override
 	public void update(Entity entity) {
 		// Do nothing
-	}
-
-	@Override
-	public void receiveEvent(BaseEvent event) {
-		// TODO: receive event
 	}
 
 	@Override

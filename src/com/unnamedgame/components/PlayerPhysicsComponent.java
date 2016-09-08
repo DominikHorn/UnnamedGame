@@ -3,7 +3,7 @@ package com.unnamedgame.components;
 import com.openglengine.core.*;
 import com.openglengine.entitity.*;
 import com.openglengine.entitity.component.*;
-import com.openglengine.eventsystem.defaultevents.*;
+import com.openglengine.eventsystem.defaultcomponentevents.*;
 import com.openglengine.util.math.*;
 
 public class PlayerPhysicsComponent extends EntityComponent {
@@ -28,6 +28,8 @@ public class PlayerPhysicsComponent extends EntityComponent {
 	@Override
 	public void update(Entity entity) {
 		// TODO: refactor potentially (speed gains by subclassing entity and having more member attributes (?))
+		Vector3f oldPos = entity.position.getScaleResult(1);
+		Vector3f oldRot = entity.rotation.getScaleResult(1);
 
 		// Fetch input
 		this.fetchInput(entity);
@@ -37,6 +39,10 @@ public class PlayerPhysicsComponent extends EntityComponent {
 
 		// Apply movement
 		this.move(entity);
+
+		// Send FollowedEntityMovedEvent so that the camera behaves correctly
+		if (!oldPos.equals(entity.position) || !oldRot.equals(entity.rotation))
+			entity.getComponentEventSystem().dispatch(new FollowedEntityMovedEvent());
 	}
 
 	private void fetchInput(Entity entity) {
@@ -89,6 +95,12 @@ public class PlayerPhysicsComponent extends EntityComponent {
 		entity.rotation.addVector(this.rotationSpeed);
 	}
 
+	/**
+	 * Moves entity and returns whether or not the entity has actually moved
+	 * 
+	 * @param entity
+	 * @return
+	 */
 	private void move(Entity entity) {
 		// Add speed vectors
 		entity.position.addVector(this.speed);
@@ -99,11 +111,6 @@ public class PlayerPhysicsComponent extends EntityComponent {
 			this.speed.y = 0;
 			this.canJump = true;
 		}
-	}
-
-	@Override
-	public void receiveEvent(BaseEvent event) {
-		// Do nothing for now
 	}
 
 	@Override
