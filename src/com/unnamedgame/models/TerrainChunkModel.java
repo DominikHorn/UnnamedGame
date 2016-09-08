@@ -33,7 +33,7 @@ public class TerrainChunkModel extends Model {
 		this.setMaterial(material);
 		this.setShader(shader);
 		
-		this.backgroundTexture = Engine.getTextureManager().loadTexture("res/tex/grassy2.png");
+		this.backgroundTexture = Engine.getTextureManager().loadTexture("res/tex/grassy.png");
 		this.rTexture = Engine.getTextureManager().loadTexture("res/tex/mud.png");
 		this.gTexture = Engine.getTextureManager().loadTexture("res/tex/grassFlowers.png");
 		this.bTexture = Engine.getTextureManager().loadTexture("res/tex/path.png");

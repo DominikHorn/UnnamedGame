@@ -28,6 +28,7 @@ public class UnnamedGame extends Basic3DGame {
 	private List<Entity> terrainChunks;
 
 	private Entity camera;
+	private Entity player;
 
 	public UnnamedGame() throws IOException {
 		super(FOV, NEAR_PLANE, FAR_PLANE);
@@ -35,10 +36,12 @@ public class UnnamedGame extends Basic3DGame {
 
 	@Override
 	protected void setup() {
+		Engine.getInputManager().setMouseGrabbed(true);
+
 		EntityFactory.load();
 		this.terrainDecoration = new ArrayList<>();
 		this.terrainChunks = new ArrayList<>();
-		this.camera = EntityFactory.getCamera(new Vector3f());
+		this.camera = EntityFactory.getCamera(new Vector3f(0, 3, 0));
 
 		this.setupTerrain();
 		Random random = new Random(System.currentTimeMillis());
@@ -73,12 +76,16 @@ public class UnnamedGame extends Basic3DGame {
 			Entity e = EntityFactory.getEntityByName(new Vector3f(posX, posY, posZ), new Vector3f(2, 2, 2), "grass");
 			this.terrainDecoration.add(e);
 		}
+
+		// Add player
+		this.player = EntityFactory.getPlayerEntity(new Vector3f(0, 0, -20), new Vector3f(1, 1, 1));
 	}
 
 
 	@Override
 	protected void update() {
 		this.camera.update();
+		this.player.update();
 
 		// Add entities
 		for (Entity entity : this.terrainDecoration) {
@@ -88,6 +95,9 @@ public class UnnamedGame extends Basic3DGame {
 
 		// Add terrain
 		this.terrainChunks.forEach(e -> Engine.getRenderManager().processEntity(e));
+
+		// Add player
+		Engine.getRenderManager().processEntity(this.player);
 
 		// Check whether or not we should quit
 		if (this.isQuitRequestedByEngine() || Engine.getInputManager().isKeyDown(InputManager.KEY_ESC))

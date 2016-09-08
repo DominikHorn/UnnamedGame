@@ -10,7 +10,7 @@ import com.unnamedgame.materials.*;
 import com.unnamedgame.models.*;
 
 /** TODO REFACTOR */
-public class TerrainChunkComponent extends Component {
+public class TerrainChunkComponent extends EntityComponent {
 	// Just a reference so that we can set the terrains shader
 	private Shader shader;
 

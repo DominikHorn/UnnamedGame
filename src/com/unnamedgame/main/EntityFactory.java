@@ -74,12 +74,18 @@ public class EntityFactory {
 				new DynamicMaterial(0, 1, false, false), treeModelData.getVertices(), treeModelData.getTextureCoords(),
 				treeModelData.getNormals(), treeModelData.getIndices());
 
+		ModelData playerModelData = Engine.getModelDataManager().loadModelData(MODEL_FOLDER + "person.obj");
+		SimpleTexturedModel playerModel = new SimpleTexturedModel(TEX_FOLDER + "playerTexture.png", standardShader,
+				new DynamicMaterial(0, 1, false, true), playerModelData.getVertices(),
+				playerModelData.getTextureCoords(), playerModelData.getNormals(), playerModelData.getIndices());
+
 		models.put("stall", stallModel);
 		models.put("dragon", dragonModel);
 		models.put("bunny", bunnyModel);
 		models.put("fern", fernModel);
 		models.put("tree", treeModel);
 		models.put("grass", grassModel);
+		models.put("player", playerModel);
 	}
 
 	public static Entity getEntityByName(Vector3f position, Vector3f scale, String modelname) {
@@ -93,6 +99,13 @@ public class EntityFactory {
 		return e;
 	}
 
+	public static Entity getPlayerEntity(Vector3f position, Vector3f scale) {
+		Entity e = new Entity(position, new Vector3f(), scale);
+		e.putProperty(RenderableEntityProperties.PROPERTY_MODEL, models.get("player"));
+		// e.addComponent(new PlayerPhysicsComponent());
+		return e;
+	}
+
 	public static Entity getRandomEntity(Vector3f position) {
 		int randHashKeyPos = random.nextInt(models.keySet().size());
 		String modelname = new ArrayList<String>(models.keySet()).get(randHashKeyPos);
@@ -100,7 +113,7 @@ public class EntityFactory {
 	}
 
 	public static Entity getCamera(Vector3f position) {
-		return new Entity(position).addComponent(new CameraInputComponent(1)).addComponent(new CameraComponent());
+		return new Entity(position).addComponent(new CameraComponentFlyoverObserver(2, 0.1f));
 	}
 
 	// TODO: refactor terrain code
