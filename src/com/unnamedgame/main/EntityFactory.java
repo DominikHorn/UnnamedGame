@@ -102,7 +102,8 @@ public class EntityFactory {
 	public static Entity getPlayerEntity(Vector3f position, Vector3f scale) {
 		Entity e = new Entity(position, new Vector3f(), scale);
 		e.putProperty(RenderableEntityProperties.PROPERTY_MODEL, models.get("player"));
-		// e.addComponent(new PlayerPhysicsComponent());
+		e.addComponent(new PlayerPhysicsComponent());
+		e.addComponent(new CameraComponentFollowEntity());
 		return e;
 	}
 
@@ -110,10 +111,6 @@ public class EntityFactory {
 		int randHashKeyPos = random.nextInt(models.keySet().size());
 		String modelname = new ArrayList<String>(models.keySet()).get(randHashKeyPos);
 		return getEntityByName(position, new Vector3f(1, 1, 1), modelname);
-	}
-
-	public static Entity getCamera(Vector3f position) {
-		return new Entity(position).addComponent(new CameraComponentFlyoverObserver(2, 0.1f));
 	}
 
 	// TODO: refactor terrain code

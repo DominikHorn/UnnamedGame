@@ -27,7 +27,6 @@ public class UnnamedGame extends Basic3DGame {
 	private List<Entity> terrainDecoration;
 	private List<Entity> terrainChunks;
 
-	private Entity camera;
 	private Entity player;
 
 	public UnnamedGame() throws IOException {
@@ -36,12 +35,11 @@ public class UnnamedGame extends Basic3DGame {
 
 	@Override
 	protected void setup() {
-		Engine.getInputManager().setMouseGrabbed(true);
+		Engine.getInputManager().setMouseGrabbed(false);
 
 		EntityFactory.load();
 		this.terrainDecoration = new ArrayList<>();
 		this.terrainChunks = new ArrayList<>();
-		this.camera = EntityFactory.getCamera(new Vector3f(0, 3, 0));
 
 		this.setupTerrain();
 		Random random = new Random(System.currentTimeMillis());
@@ -84,7 +82,6 @@ public class UnnamedGame extends Basic3DGame {
 
 	@Override
 	protected void update() {
-		this.camera.update();
 		this.player.update();
 
 		// Add entities

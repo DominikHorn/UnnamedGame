@@ -8,8 +8,8 @@ import com.openglengine.util.math.*;
 
 public class PlayerPhysicsComponent extends EntityComponent {
 
-	private static final float RUN_SPEED = 0.4f;
-	private static final float TURN_SPEED = 0.1f;
+	private static final float RUN_SPEED = 1f;
+	private static final float TURN_SPEED = 0.05f;
 	private static final float JUMP_VELOCITY = 1f;
 	private static final float GRAVITY = 0.05f;
 	private static final double ANGLE_OFFSET = 90.0 * Math.PI / 180.0;
@@ -64,8 +64,8 @@ public class PlayerPhysicsComponent extends EntityComponent {
 		}
 
 		if (input.isKeyDown(InputManager.KEY_S)) {
-			this.speed.z += (float) -(RUN_SPEED * Math.cos(entity.rotation.y));
-			this.speed.x += (float) -(RUN_SPEED * Math.sin(entity.rotation.y));
+			this.speed.z -= (float) (RUN_SPEED * Math.cos(entity.rotation.y));
+			this.speed.x -= (float) (RUN_SPEED * Math.sin(entity.rotation.y));
 		}
 
 		if (input.isKeyDown(InputManager.KEY_A)) {
