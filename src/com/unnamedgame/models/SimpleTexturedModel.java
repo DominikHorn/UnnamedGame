@@ -30,13 +30,11 @@ public class SimpleTexturedModel extends Model {
 			float[] texCoords, float[] normals,
 			int[] indices) {
 		// Initialize to 0
-		super(0, indices.length);
+		super(0, indices.length, shader, material);
 
 		// Initialize attributes
 		this.vbos = new ArrayList<>();
 		this.texture = Engine.getTextureManager().loadTexture(texturePath);
-		this.setMaterial(material);
-		this.setShader(shader);
 
 		// Load actual values
 		this.loadToVAO(positions, texCoords, normals, indices);

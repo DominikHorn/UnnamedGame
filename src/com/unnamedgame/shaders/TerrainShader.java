@@ -82,7 +82,7 @@ public class TerrainShader extends Shader {
 		super.loadVector3f(location_lightPosition, this.lightSource.position);
 		super.loadVector3f(location_lightColor, this.lightSource.color);
 		super.loadFloat(location_lightBrightness, this.lightSource.brightness);
-		super.loadFloat(location_ambientBrightness, 0.0f); // TODO: refactor
+		super.loadFloat(location_ambientBrightness, 0.2f); // TODO: refactor
 		super.loadInt(location_backgroundTexture, 0);
 		super.loadInt(location_rTexture, 1);
 		super.loadInt(location_gTexture, 2);

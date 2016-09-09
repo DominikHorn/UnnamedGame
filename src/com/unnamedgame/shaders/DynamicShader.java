@@ -70,7 +70,7 @@ public class DynamicShader extends Shader {
 		super.loadVector3f(location_lightPosition, this.lightSource.position);
 		super.loadVector3f(location_lightColor, this.lightSource.color);
 		super.loadFloat(location_lightBrightness, this.lightSource.brightness);
-		super.loadFloat(location_ambientBrightness, 0.0f); // TODO: refactor
+		super.loadFloat(location_ambientBrightness, 0.2f); // TODO: refactor
 	}
 
 	@Override

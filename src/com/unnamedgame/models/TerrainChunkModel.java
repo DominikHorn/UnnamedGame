@@ -26,18 +26,16 @@ public class TerrainChunkModel extends Model {
 			float[] texCoords, float[] normals,
 			int[] indices) {
 		// Initialize to 0
-		super(0, indices.length);
+		super(0, indices.length, shader, material);
 
 		// Initialize attributes
 		this.vbos = new ArrayList<>();
-		this.setMaterial(material);
-		this.setShader(shader);
 		
-		this.backgroundTexture = Engine.getTextureManager().loadTexture("res/tex/grassy.png");
+		this.backgroundTexture = Engine.getTextureManager().loadTexture("res/tex/terrain.png");
 		this.rTexture = Engine.getTextureManager().loadTexture("res/tex/mud.png");
-		this.gTexture = Engine.getTextureManager().loadTexture("res/tex/grassFlowers.png");
+		this.gTexture = Engine.getTextureManager().loadTexture("res/tex/flowers.png");
 		this.bTexture = Engine.getTextureManager().loadTexture("res/tex/path.png");
-		this.blendMap = Engine.getTextureManager().loadTexture("res/tex/blendMap.png");
+		this.blendMap = Engine.getTextureManager().loadTexture("res/tex/blendmap.png");
 
 		// Load actual values
 		this.loadToVAO(positions, texCoords, normals, indices);

@@ -1,10 +1,10 @@
 package com.unnamedgame.main;
 
 import java.io.*;
-import java.util.*;
 
 import com.openglengine.core.*;
 import com.openglengine.entitity.*;
+import com.openglengine.renderer.*;
 import com.openglengine.util.Logger.*;
 import com.openglengine.util.math.*;
 
@@ -24,8 +24,17 @@ public class UnnamedGame extends Basic3DGame {
 	private static final boolean FULLSCREEN = false;
 	private static final String WINDOW_BASETITLE = "Engine " + Engine.ENGINE_VERSION;
 
-	private List<Entity> terrainDecoration;
-	private List<Entity> terrainChunks;
+	public static String RES_FOLDER = "res/";
+	public static String MODEL_FOLDER = RES_FOLDER + "model/";
+	public static String TEX_FOLDER = RES_FOLDER + "tex/";
+	public static String SHADER_FOLDER = RES_FOLDER + "shader/";
+	public static String TERRAIN_FOLDER = RES_FOLDER + "terrain/";
+
+	public static LightSource LIGHT_SOURCE = new LightSource(new Vector3f(0, 500f, 0), new Vector3f(1.0f, 1.0f, 1.0f),
+			0f);
+	// public static Vector3f SKY_COLOR = new Vector3f(0.478f, 1f, 0.952f);
+	public static Vector3f SKY_COLOR = new Vector3f(1f, 1f, 1f);
+	public static Terrain TERRAIN;
 
 	private Entity player;
 
@@ -35,66 +44,25 @@ public class UnnamedGame extends Basic3DGame {
 
 	@Override
 	protected void setup() {
+		EntityFactory.load();
+
 		Engine.getInputManager().setMouseGrabbed(false);
 
-		EntityFactory.load();
-		this.terrainDecoration = new ArrayList<>();
-		this.terrainChunks = new ArrayList<>();
-
-		this.setupTerrain();
-		Random random = new Random(System.currentTimeMillis());
-
-		// Add 200 ferns
-		for (int i = 0; i < 200; i++) {
-			float posX = (random.nextInt((int) (Terrain.CHUNK_SIZE * 2)) - Terrain.CHUNK_SIZE);
-			float posY = 0;
-			float posZ = random.nextInt((int) (Terrain.CHUNK_SIZE * 2)) - Terrain.CHUNK_SIZE;
-
-			Entity e = EntityFactory.getEntityByName(new Vector3f(posX, posY, posZ), new Vector3f(1, 1, 1), "fern");
-			this.terrainDecoration.add(e);
-		}
-
-		// Add 300 trees
-		for (int i = 0; i < 30; i++) {
-			float posX = (random.nextInt((int) (Terrain.CHUNK_SIZE * 2)) - Terrain.CHUNK_SIZE);
-			float posY = 0;
-			float posZ = random.nextInt((int) (Terrain.CHUNK_SIZE * 2)) - Terrain.CHUNK_SIZE;
-
-			Entity e = EntityFactory.getEntityByName(new Vector3f(posX, posY, posZ), new Vector3f(10, 10, 10),
-					"tree");
-			this.terrainDecoration.add(e);
-		}
-
-		// Add 400 grass
-		for (int i = 0; i < 400; i++) {
-			float posX = random.nextFloat() * Terrain.CHUNK_SIZE * 2 - Terrain.CHUNK_SIZE;
-			float posY = 0;
-			float posZ = random.nextFloat() * Terrain.CHUNK_SIZE * 2 - Terrain.CHUNK_SIZE;
-
-			Entity e = EntityFactory.getEntityByName(new Vector3f(posX, posY, posZ), new Vector3f(2, 2, 2), "grass");
-			this.terrainDecoration.add(e);
-		}
-
-		// Add player
-		this.player = EntityFactory.getPlayerEntity(new Vector3f(0, 0, -20), new Vector3f(1, 1, 1));
+		TERRAIN = new Terrain();
+		this.player = EntityFactory.getPlayerEntity(new Vector3f(0, 0, -20), new Vector3f(0.5f, 0.5f, 0.5f));
 	}
 
 
 	@Override
 	protected void update() {
+		// Update terrain
+		TERRAIN.update();
+
+		// Update player
 		this.player.update();
 
-		// Add entities
-		for (Entity entity : this.terrainDecoration) {
-			entity.update();
-			Engine.getRenderManager().processEntity(entity);
-		}
-
-		// Add terrain
-		this.terrainChunks.forEach(e -> Engine.getRenderManager().processEntity(e));
-
-		// Add player
-		Engine.getRenderManager().processEntity(this.player);
+		// Add player to rendering queue
+		Engine.getRenderManager().processRenderObject(this.player.model, this.player);
 
 		// Check whether or not we should quit
 		if (this.isQuitRequestedByEngine() || Engine.getInputManager().isKeyDown(InputManager.KEY_ESC))
@@ -103,21 +71,13 @@ public class UnnamedGame extends Basic3DGame {
 
 	@Override
 	protected void cleanup() {
-		this.terrainDecoration.forEach(e -> e.cleanup());
-		this.terrainChunks.forEach(t -> t.cleanup());
+		TERRAIN.cleanup();
 		EntityFactory.cleanup();
 	}
 
 	@Override
 	protected Display setupDisplay() {
 		return new Display(SCREEN_WIDTH, SCREEN_HEIGHT, FULLSCREEN, WINDOW_BASETITLE);
-	}
-
-	private void setupTerrain() {
-		this.terrainChunks.add(EntityFactory.getTerrainChunk(-1, -1));
-		this.terrainChunks.add(EntityFactory.getTerrainChunk(-1, 0));
-		this.terrainChunks.add(EntityFactory.getTerrainChunk(0, -1));
-		this.terrainChunks.add(EntityFactory.getTerrainChunk(0, 0));
 	}
 
 	public static void main(String argv[]) {

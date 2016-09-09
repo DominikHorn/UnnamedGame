@@ -5,6 +5,7 @@ import com.openglengine.entitity.*;
 import com.openglengine.entitity.component.*;
 import com.openglengine.eventsystem.defaultcomponentevents.*;
 import com.openglengine.util.math.*;
+import com.unnamedgame.main.*;
 
 public class PlayerPhysicsComponent extends EntityComponent {
 
@@ -106,8 +107,9 @@ public class PlayerPhysicsComponent extends EntityComponent {
 		entity.position.addVector(this.speed);
 
 		// Make sure player does not fall through ground
-		if (entity.position.y < 0) {
-			entity.position.y = 0;
+		float terrainHeight = UnnamedGame.TERRAIN.getHeightAt(entity.position.x, entity.position.z);
+		if (entity.position.y < terrainHeight) {
+			entity.position.y = terrainHeight;
 			this.speed.y = 0;
 			this.canJump = true;
 		}
