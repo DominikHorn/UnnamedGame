@@ -1,8 +1,8 @@
 package com.unnamedgame.shaders;
 
-import com.openglengine.renderer.*;
 import com.openglengine.renderer.model.*;
 import com.openglengine.renderer.shader.*;
+import com.openglengine.util.*;
 import com.openglengine.util.math.*;
 import com.unnamedgame.materials.*;
 
@@ -79,14 +79,9 @@ public class DynamicShader extends Shader {
 
 		DynamicMaterial material = (DynamicMaterial) model.getMaterial();
 
-		Float shineDamper = (Float) material.getPropertyValue(DynamicMaterial.PROPERTY_SHINE_DAMPER);
-		Float reflectivity = (Float) material.getPropertyValue(DynamicMaterial.PROPERTY_REFLECTIVITY);
-		Boolean transparent = (Boolean) material.getPropertyValue(DynamicMaterial.PROPERTY_TRANSPARENCY);
-		Boolean useFakeLighting = (Boolean) material.getPropertyValue(DynamicMaterial.PROPERTY_USE_FAKE_LIGHTING);
-		
-		super.loadFloat(location_shineDamper, shineDamper);
-		super.loadFloat(location_reflectivity, reflectivity);
-		super.loadFloat(location_transparent, transparent == false ? 0 : 1);
-		super.loadFloat(location_useFakeLighting, useFakeLighting == false ? 0 : 1);
+		super.loadFloat(location_shineDamper, material.shineDamper);
+		super.loadFloat(location_reflectivity, material.reflectivity);
+		super.loadFloat(location_transparent, material.transparent == false ? 0 : 1);
+		super.loadFloat(location_useFakeLighting, material.useFakeLighting == false ? 0 : 1);
 	}
 }

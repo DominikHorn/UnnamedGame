@@ -29,21 +29,21 @@ public class TerrainChunk implements RenderDelegate, ResourceManager {
 	private Random random = new Random();
 
 	// TODO: refactor
-	private List<Entity> terrainDecoration;
+	private List<RenderableEntity> terrainDecoration;
 
 	public TerrainChunk(Shader shader, Material material, float x, float z) {
 		this.pos = new Vector3f(x, 0, z);
 		this.terrainDecoration = new ArrayList<>();
 		this.model = this.generateTerrainChunkModel(UnnamedGame.TERRAIN_FOLDER + "blendmap.png",
 				UnnamedGame.TERRAIN_FOLDER + "heightmap.png", shader, material);
-		this.generateTerrainDecoration(UnnamedGame.TERRAIN_FOLDER + "blendmap.png");
+		this.generateTerrainDecoration();
 	}
 
 	public void update() {
 		// TODO: implement decoration frustum culling
-		for (Entity deco : this.terrainDecoration) {
+		for (RenderableEntity deco : this.terrainDecoration) {
 			deco.update();
-			Engine.getRenderManager().processEntity(deco);
+			Engine.getRenderManager().processRenderableEntity(deco);
 		}
 
 		Engine.getRenderManager().processRenderObject(this.model, this);
@@ -127,7 +127,7 @@ public class TerrainChunk implements RenderDelegate, ResourceManager {
 		return new Color(answer, true);
 	}
 
-	private void generateTerrainDecoration(String blendMapPath) {
+	private void generateTerrainDecoration() {
 		// Place fern using terrain height as indicator
 		for (int i = 0; i < 20; i++) {
 			Vector3f pos = new Vector3f();
@@ -150,7 +150,7 @@ public class TerrainChunk implements RenderDelegate, ResourceManager {
 				pos.z = random.nextFloat() * Terrain.CHUNK_SIZE + this.pos.z;
 				pos.y = this.getHeightAt(pos.x, pos.z) - 3f;
 				color = this.getColorAt(pos.x, pos.z);
-			} while (pos.y > 5f || color.getBlue() > 0 || color.getRed() > 0);
+			} while (pos.y > 5f || color.getBlue() > 0 || color.getRed() > 0 || color.getGreen() > 0);
 			this.terrainDecoration.add(EntityFactory.getEntityByName(pos, new Vector3f(2, 2, 2), "tree"));
 		}
 

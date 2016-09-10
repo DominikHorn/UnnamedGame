@@ -2,9 +2,11 @@ package com.unnamedgame.main;
 
 import java.io.*;
 
+import org.lwjgl.opengl.*;
+
 import com.openglengine.core.*;
 import com.openglengine.entitity.*;
-import com.openglengine.renderer.*;
+import com.openglengine.util.*;
 import com.openglengine.util.Logger.*;
 import com.openglengine.util.math.*;
 
@@ -30,13 +32,14 @@ public class UnnamedGame extends Basic3DGame {
 	public static String SHADER_FOLDER = RES_FOLDER + "shader/";
 	public static String TERRAIN_FOLDER = RES_FOLDER + "terrain/";
 
-	public static LightSource LIGHT_SOURCE = new LightSource(new Vector3f(0, 500f, 0), new Vector3f(1.0f, 1.0f, 1.0f),
-			0f);
-	// public static Vector3f SKY_COLOR = new Vector3f(0.478f, 1f, 0.952f);
-	public static Vector3f SKY_COLOR = new Vector3f(1f, 1f, 1f);
+	public static MovingLightSource SUN_SOURCE;
+	public static Vector3f SKY_COLOR;
 	public static Terrain TERRAIN;
 
-	private Entity player;
+	private RenderableEntity player;
+
+	// TODO: tmp debug
+	private boolean wireframe = false;
 
 	public UnnamedGame() throws IOException {
 		super(FOV, NEAR_PLANE, FAR_PLANE);
@@ -44,22 +47,42 @@ public class UnnamedGame extends Basic3DGame {
 
 	@Override
 	protected void setup() {
+		// Must be setup before entity factory
+		SKY_COLOR = new Vector3f(1f, 1f, 1f);
+
+		// Setup sun
+		SUN_SOURCE = new MovingLightSource((source, tickCount) -> {
+			// 1 turn every 60 ticks -> 60 ticks must equal 2pi ->
+			double result = ((double) 0.005 * tickCount / (2 * Math.PI)) % (2 * Math.PI);
+			source.position.y = (float) Math.sin(result) * 500f;
+			source.position.x = (float) Math.cos(result) * 500f;
+		}, new Vector3f(0, 500f, 0), new Vector3f(1.0f, 0.86f, 0.57f), 0f);
+
+		// Load models
 		EntityFactory.load();
 
+		// Setup globals
+		TERRAIN = new Terrain();
+
+		// Don't grab the mouse (until we have a fps camera)
 		Engine.getInputManager().setMouseGrabbed(false);
 
-		TERRAIN = new Terrain();
-		TERRAIN.getHeightAt(0, 0);
-		TERRAIN.getHeightAt(-200, 1);
-		TERRAIN.getHeightAt(-5000, -5000);
-		TERRAIN.getHeightAt(30, -50000);
-		TERRAIN.getHeightAt(400, 5000);
-
-		this.player = EntityFactory.getPlayerEntity(new Vector3f(0, 0, 0), new Vector3f(0.5f, 0.5f, 0.5f));
+		// Create player entity
+		this.player = EntityFactory.getPlayerEntity(new Vector3f(0, 0, 0), new Vector3f(1f, 1f, 1f));
 	}
 
 	@Override
 	protected void update() {
+		// TODO: tmp debug stuff
+		if (Engine.getInputManager().wasKeyPressed(InputManager.KEY_F1)) {
+			this.wireframe = !this.wireframe;
+
+			if (this.wireframe)
+				GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+			else
+				GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+		}
+
 		// Update terrain
 		TERRAIN.update();
 

@@ -1,8 +1,8 @@
 package com.unnamedgame.shaders;
 
-import com.openglengine.renderer.*;
 import com.openglengine.renderer.model.*;
 import com.openglengine.renderer.shader.*;
+import com.openglengine.util.*;
 import com.openglengine.util.math.*;
 import com.unnamedgame.materials.*;
 
@@ -93,12 +93,10 @@ public class TerrainShader extends Shader {
 	@Override
 	public void uploadModelUniforms(Model model) {
 		super.uploadModelUniforms(model);
+
 		TerrainMaterial material = (TerrainMaterial) model.getMaterial();
 
-		Float shineDamper = (Float) material.getPropertyValue(TerrainMaterial.PROPERTY_SHINE_DAMPER);
-		Float reflectivity = (Float) material.getPropertyValue(TerrainMaterial.PROPERTY_REFLECTIVITY);
-
-		super.loadFloat(location_shineDamper, shineDamper);
-		super.loadFloat(location_reflectivity, reflectivity);
+		super.loadFloat(location_shineDamper, material.shineDamper);
+		super.loadFloat(location_reflectivity, material.reflectivity);
 	}
 }

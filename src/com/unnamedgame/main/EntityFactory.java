@@ -26,39 +26,15 @@ public class EntityFactory {
 		// TODO: refactor
 		GL11.glClearColor(UnnamedGame.SKY_COLOR.x, UnnamedGame.SKY_COLOR.y, UnnamedGame.SKY_COLOR.z, 1.0f);
 
-		standardShader = new DynamicShader(UnnamedGame.LIGHT_SOURCE, UnnamedGame.SKY_COLOR);
+		standardShader = new DynamicShader(UnnamedGame.SUN_SOURCE, UnnamedGame.SKY_COLOR);
 		standardShader.compileShaderFromFiles(UnnamedGame.SHADER_FOLDER + "standard_vertex.glsl",
 				UnnamedGame.SHADER_FOLDER + "standard_fragment.glsl");
-
-		ModelData stallModelData = Engine.getModelDataManager().loadModelData(UnnamedGame.MODEL_FOLDER + "stall.obj");
-		SimpleTexturedModel stallModel = new SimpleTexturedModel(UnnamedGame.TEX_FOLDER + "stall.png", standardShader,
-				new DynamicMaterial(0, 1, false, false), stallModelData.getVertices(),
-				stallModelData.getTextureCoords(), stallModelData.getNormals(), stallModelData.getIndices());
-		stallModelData.cleanup();
-
-		ModelData dragonModelData = Engine.getModelDataManager().loadModelData(UnnamedGame.MODEL_FOLDER + "dragon.obj");
-		SimpleTexturedModel dragonModel = new SimpleTexturedModel(UnnamedGame.TEX_FOLDER + "dragon.png", standardShader,
-				new DynamicMaterial(0, 1, false, false), dragonModelData.getVertices(),
-				dragonModelData.getTextureCoords(), dragonModelData.getNormals(), dragonModelData.getIndices());
-		dragonModelData.cleanup();
-
-		ModelData bunnyModelData = Engine.getModelDataManager().loadModelData(UnnamedGame.MODEL_FOLDER + "bunny.obj");
-		SimpleTexturedModel bunnyModel = new SimpleTexturedModel(UnnamedGame.TEX_FOLDER + "bunny.png", standardShader,
-				new DynamicMaterial(0, 1, false, false), bunnyModelData.getVertices(),
-				bunnyModelData.getTextureCoords(), bunnyModelData.getNormals(), bunnyModelData.getIndices());
-		bunnyModelData.cleanup();
 
 		ModelData fernModelData = Engine.getModelDataManager().loadModelData(UnnamedGame.MODEL_FOLDER + "fern.obj");
 		SimpleTexturedModel fernModel = new SimpleTexturedModel(UnnamedGame.TEX_FOLDER + "fern.png", standardShader,
 				new DynamicMaterial(0, 1, true, false), fernModelData.getVertices(), fernModelData.getTextureCoords(),
 				fernModelData.getNormals(), fernModelData.getIndices());
 		fernModelData.cleanup();
-
-		ModelData treeModelData = Engine.getModelDataManager().loadModelData(UnnamedGame.MODEL_FOLDER + "tree.obj");
-		SimpleTexturedModel treeModel = new SimpleTexturedModel(UnnamedGame.TEX_FOLDER + "tree.png", standardShader,
-				new DynamicMaterial(0, 1, false, false), treeModelData.getVertices(), treeModelData.getTextureCoords(),
-				treeModelData.getNormals(), treeModelData.getIndices());
-		treeModelData.cleanup();
 
 		ModelData lowPolyTreeModelData = Engine.getModelDataManager()
 				.loadModelData(UnnamedGame.MODEL_FOLDER + "lowPolyTree.obj");
@@ -76,41 +52,35 @@ public class EntityFactory {
 				playerModelData.getTextureCoords(), playerModelData.getNormals(), playerModelData.getIndices());
 		playerModelData.cleanup();
 
-		models.put("stall", stallModel);
-		models.put("dragon", dragonModel);
-		models.put("bunny", bunnyModel);
 		models.put("fern", fernModel);
-		// models.put("tree", treeModel);
 		models.put("tree", lowPolyTreeModel);
 		models.put("player", playerModel);
 	}
 
-	public static Entity getEntityByName(Vector3f position, Vector3f scale, String modelname) {
+	public static RenderableEntity getEntityByName(Vector3f position, Vector3f scale, String modelname) {
 		Vector3f rotation = new Vector3f();
 		rotation.x = 0;
 		rotation.y = random.nextFloat() * 360 * ROTATION_FLOAT_SCALE;
 		rotation.z = 0;
-		Entity e = new Entity(position, rotation, scale);
-		e.model = models.get(modelname);
+		RenderableEntity e = new RenderableEntity(models.get(modelname), position, rotation, scale);
 
 		return e;
 	}
 
-	public static Entity getPlayerEntity(Vector3f position, Vector3f scale) {
-		Entity e = new Entity(position, new Vector3f(), scale);
-		e.model = models.get("player");
+	public static RenderableEntity getPlayerEntity(Vector3f position, Vector3f scale) {
+		RenderableEntity e = new RenderableEntity(models.get("player"), position, new Vector3f(), scale);
 		e.addComponent(new PlayerPhysicsComponent());
 		e.addComponent(new CameraComponentFollowEntity());
 		return e;
 	}
 
 	public static Entity getCamera(Vector3f position) {
-		Entity e = new Entity(position, new Vector3f(), new Vector3f());
+		Entity e = new Entity(position, new Vector3f());
 		e.addComponent(new CameraComponentFlyoverObserver(1, 0.1f));
 		return e;
 	}
 
-	public static Entity getRandomEntity(Vector3f position) {
+	public static RenderableEntity getRandomEntity(Vector3f position) {
 		int randHashKeyPos = random.nextInt(models.keySet().size());
 		String modelname = new ArrayList<String>(models.keySet()).get(randHashKeyPos);
 		return getEntityByName(position, new Vector3f(1, 1, 1), modelname);

@@ -6,7 +6,7 @@ import com.openglengine.entitity.component.*;
 import com.openglengine.util.math.*;
 import com.unnamedgame.main.*;
 
-public class PlayerPhysicsComponent extends EntityComponent {
+public class PlayerPhysicsComponent implements RenderableEntityComponent {
 
 	private static final float RUN_SPEED = 1f;
 	private static final float TURN_SPEED = 0.05f;
@@ -20,13 +20,13 @@ public class PlayerPhysicsComponent extends EntityComponent {
 	private boolean canJump = false;
 
 	@Override
-	public void init(Entity entity) {
+	public void init(RenderableEntity entity) {
 		this.speed = new Vector3f();
 		this.rotationSpeed = new Vector3f();
 	}
 
 	@Override
-	public void update(Entity entity) {
+	public void update(RenderableEntity entity) {
 		// Fetch input
 		this.fetchInput(entity);
 
@@ -37,7 +37,7 @@ public class PlayerPhysicsComponent extends EntityComponent {
 		this.move(entity);
 	}
 
-	private void fetchInput(Entity entity) {
+	private void fetchInput(RenderableEntity entity) {
 		InputManager input = Engine.getInputManager();
 
 		// Reset old movement
@@ -83,7 +83,7 @@ public class PlayerPhysicsComponent extends EntityComponent {
 		}
 	}
 
-	private void rotate(Entity entity) {
+	private void rotate(RenderableEntity entity) {
 		entity.rotation.addVector(this.rotationSpeed);
 	}
 
@@ -93,7 +93,7 @@ public class PlayerPhysicsComponent extends EntityComponent {
 	 * @param entity
 	 * @return
 	 */
-	private void move(Entity entity) {
+	private void move(RenderableEntity entity) {
 		// Add speed vectors
 		entity.position.addVector(this.speed);
 
@@ -107,7 +107,7 @@ public class PlayerPhysicsComponent extends EntityComponent {
 	}
 
 	@Override
-	public void cleanup(Entity entity) {
+	public void cleanup() {
 		// Do nothing for now
 	}
 

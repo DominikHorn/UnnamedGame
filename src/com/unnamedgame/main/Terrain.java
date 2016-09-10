@@ -25,7 +25,7 @@ public class Terrain implements ResourceManager {
 	private List<TerrainChunk> visibleChunks;
 
 	public Terrain() {
-		this.terrainShader = new TerrainShader(UnnamedGame.LIGHT_SOURCE, UnnamedGame.SKY_COLOR);
+		this.terrainShader = new TerrainShader(UnnamedGame.SUN_SOURCE, UnnamedGame.SKY_COLOR);
 		this.terrainShader.compileShaderFromFiles(UnnamedGame.SHADER_FOLDER + "terrain_vertex.glsl",
 				UnnamedGame.SHADER_FOLDER + "terrain_fragment.glsl");
 		this.terrainMaterial = new TerrainMaterial(0, 1);
@@ -34,7 +34,6 @@ public class Terrain implements ResourceManager {
 		this.visibleChunks = new ArrayList<>();
 
 		this.generateTerrain();
-		// this.generateDecoration();
 	}
 
 	public void update() {
