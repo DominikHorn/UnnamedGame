@@ -10,8 +10,8 @@ import org.lwjgl.opengl.*;
 import com.openglengine.core.*;
 import com.openglengine.renderer.material.*;
 import com.openglengine.renderer.model.*;
-import com.openglengine.renderer.shader.*;
 import com.openglengine.renderer.texture.*;
+import com.unnamedgame.shaders.*;
 
 /**
  * Container class for static models that will never change
@@ -19,14 +19,14 @@ import com.openglengine.renderer.texture.*;
  * @author Dominik
  *
  */
-public class SimpleTexturedModel extends Model {
+public class SimpleTexturedModel extends Model<DynamicShader> {
 	/** Internal list used to keep track of all the vbos that were create for this model */
 	private List<Integer> vbos;
 
 	/** Texture used when rendering this model */
 	private Texture texture = null;
 
-	public SimpleTexturedModel(String texturePath, Shader shader, Material material, float[] positions,
+	public SimpleTexturedModel(String texturePath, DynamicShader shader, Material<DynamicShader> material, float[] positions,
 			float[] texCoords, float[] normals,
 			int[] indices) {
 		// Initialize to 0

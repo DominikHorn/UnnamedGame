@@ -1,47 +1,45 @@
 package com.unnamedgame.shaders;
 
-import com.openglengine.renderer.model.*;
 import com.openglengine.renderer.shader.*;
 import com.openglengine.util.*;
 import com.openglengine.util.math.*;
-import com.unnamedgame.materials.*;
 
 public class TerrainShader extends Shader {
 	/** uniform location of the lights position shader attrib */
-	private int location_lightPosition;
+	public int location_lightPosition;
 
 	/** uniform location of the lights color shader attrib */
-	private int location_lightColor;
+	public int location_lightColor;
 
 	/** uniform location of the shine dampener shader attrib */
-	private int location_shineDamper;
+	public int location_shineDamper;
 
 	/** uniform location of the reflectivity shader attrib */
-	private int location_reflectivity;
+	public int location_reflectivity;
 
 	/** uniform location of ambient brightness attrib */
-	private int location_ambientBrightness;
+	public int location_ambientBrightness;
 
 	/** uniform location of light source brightness */
-	private int location_lightBrightness;
+	public int location_lightBrightness;
 
 	/** uniform location of sky color */
-	private int location_skyColor;
+	public int location_skyColor;
 
 	/** uniform location of sky color */
-	private int location_backgroundTexture;
+	public int location_backgroundTexture;
 
 	/** uniform location of sky color */
-	private int location_rTexture;
+	public int location_rTexture;
 
 	/** uniform location of sky color */
-	private int location_gTexture;
+	public int location_gTexture;
 
 	/** uniform location of sky color */
-	private int location_bTexture;
+	public int location_bTexture;
 
 	/** uniform location of sky color */
-	private int location_blendMap;
+	public int location_blendMap;
 
 	/** TODO: refactor */
 	private LightSource lightSource;
@@ -73,8 +71,6 @@ public class TerrainShader extends Shader {
 
 	@Override
 	public void uploadGlobalUniforms() {
-		super.uploadGlobalUniforms();
-
 		// TODO: refactor sky color
 		super.loadVector3f(location_skyColor, this.skyColor);
 
@@ -88,15 +84,5 @@ public class TerrainShader extends Shader {
 		super.loadInt(location_gTexture, 2);
 		super.loadInt(location_bTexture, 3);
 		super.loadInt(location_blendMap, 4);
-	}
-
-	@Override
-	public void uploadModelUniforms(Model model) {
-		super.uploadModelUniforms(model);
-
-		TerrainMaterial material = (TerrainMaterial) model.getMaterial();
-
-		super.loadFloat(location_shineDamper, material.shineDamper);
-		super.loadFloat(location_reflectivity, material.reflectivity);
 	}
 }

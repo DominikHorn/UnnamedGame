@@ -17,10 +17,11 @@ import com.openglengine.renderer.shader.*;
 import com.openglengine.util.*;
 import com.openglengine.util.math.*;
 import com.unnamedgame.models.*;
+import com.unnamedgame.shaders.*;
 
 public class TerrainChunk implements RenderDelegate, ResourceManager {
 
-	private Model model;
+	private Model<TerrainShader> model;
 	private Vector3f pos;
 
 	private float[][] heights;
@@ -31,7 +32,7 @@ public class TerrainChunk implements RenderDelegate, ResourceManager {
 	// TODO: refactor
 	private List<RenderableEntity> terrainDecoration;
 
-	public TerrainChunk(Shader shader, Material material, float x, float z) {
+	public TerrainChunk(TerrainShader shader, Material<TerrainShader> material, float x, float z) {
 		this.pos = new Vector3f(x, 0, z);
 		this.terrainDecoration = new ArrayList<>();
 		this.model = this.generateTerrainChunkModel(UnnamedGame.TERRAIN_FOLDER + "blendmap.png",
@@ -156,8 +157,9 @@ public class TerrainChunk implements RenderDelegate, ResourceManager {
 
 	}
 
-	private Model generateTerrainChunkModel(String blendMapPath, String heightMapPath, Shader shader,
-			Material material) {
+	private Model<TerrainShader> generateTerrainChunkModel(String blendMapPath, String heightMapPath,
+			TerrainShader shader,
+			Material<TerrainShader> material) {
 		BufferedImage heightMap = null;
 		try {
 			heightMap = ImageIO.read(new File(heightMapPath));
@@ -255,7 +257,7 @@ public class TerrainChunk implements RenderDelegate, ResourceManager {
 	}
 
 	@Override
-	public void initRendercode() {
+	public void initRendercode(Shader shader) {
 		// Set model transform
 		TransformationMatrixStack tms = Engine.getModelMatrixStack();
 		tms.push();

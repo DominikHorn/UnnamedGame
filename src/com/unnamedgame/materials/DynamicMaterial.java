@@ -3,8 +3,9 @@ package com.unnamedgame.materials;
 import org.lwjgl.opengl.*;
 
 import com.openglengine.renderer.material.*;
+import com.unnamedgame.shaders.*;
 
-public class DynamicMaterial extends Material {
+public class DynamicMaterial extends Material<DynamicShader> {
 	public float reflectivity = 0;
 	public float shineDamper = 1;
 	public boolean transparent = false;
@@ -18,9 +19,14 @@ public class DynamicMaterial extends Material {
 	}
 
 	@Override
-	public void initRendercode() {
+	public void initRendercode(DynamicShader shader) {
 		if (this.transparent)
 			GL11.glDisable(GL11.GL_CULL_FACE);
+
+		shader.loadFloat(shader.location_shineDamper, this.shineDamper);
+		shader.loadFloat(shader.location_reflectivity, this.reflectivity);
+		shader.loadFloat(shader.location_transparent, this.transparent == false ? 0 : 1);
+		shader.loadFloat(shader.location_useFakeLighting, this.useFakeLighting == false ? 0 : 1);
 	}
 
 	@Override

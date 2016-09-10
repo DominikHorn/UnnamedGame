@@ -18,7 +18,7 @@ public class Terrain implements ResourceManager {
 
 	// TODO: refactor
 	private TerrainShader terrainShader;
-	private Material terrainMaterial;
+	private Material<TerrainShader> terrainMaterial;
 
 	private TerrainChunk[][] terrainChunks;
 

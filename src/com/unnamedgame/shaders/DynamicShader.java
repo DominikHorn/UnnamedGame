@@ -1,38 +1,36 @@
 package com.unnamedgame.shaders;
 
-import com.openglengine.renderer.model.*;
 import com.openglengine.renderer.shader.*;
 import com.openglengine.util.*;
 import com.openglengine.util.math.*;
-import com.unnamedgame.materials.*;
 
 public class DynamicShader extends Shader {
 	/** uniform location of the lights position shader attrib */
-	private int location_lightPosition;
+	public int location_lightPosition;
 
 	/** uniform location of the lights color shader attrib */
-	private int location_lightColor;
+	public int location_lightColor;
 
 	/** uniform location of the shine dampener shader attrib */
-	private int location_shineDamper;
+	public int location_shineDamper;
 
 	/** uniform location of the reflectivity shader attrib */
-	private int location_reflectivity;
+	public int location_reflectivity;
 
 	/** uniform location of ambient brightness attrib */
-	private int location_ambientBrightness;
+	public int location_ambientBrightness;
 
 	/** uniform location of light source brightness */
-	private int location_lightBrightness;
+	public int location_lightBrightness;
 
 	/** uniform location of light source brightness */
-	private int location_transparent;
+	public int location_transparent;
 
 	/** uniform location of fake lighting property */
-	private int location_useFakeLighting;
+	public int location_useFakeLighting;
 
 	/** uniform location of sky color */
-	private int location_skyColor;
+	public int location_skyColor;
 
 	/** TODO: refactor */
 	private LightSource lightSource;
@@ -61,8 +59,6 @@ public class DynamicShader extends Shader {
 
 	@Override
 	public void uploadGlobalUniforms() {
-		super.uploadGlobalUniforms();
-
 		// TODO: refactor sky color
 		super.loadVector3f(location_skyColor, this.skyColor);
 
@@ -71,17 +67,5 @@ public class DynamicShader extends Shader {
 		super.loadVector3f(location_lightColor, this.lightSource.color);
 		super.loadFloat(location_lightBrightness, this.lightSource.brightness);
 		super.loadFloat(location_ambientBrightness, 0.2f); // TODO: refactor
-	}
-
-	@Override
-	public void uploadModelUniforms(Model model) {
-		super.uploadModelUniforms(model);
-
-		DynamicMaterial material = (DynamicMaterial) model.getMaterial();
-
-		super.loadFloat(location_shineDamper, material.shineDamper);
-		super.loadFloat(location_reflectivity, material.reflectivity);
-		super.loadFloat(location_transparent, material.transparent == false ? 0 : 1);
-		super.loadFloat(location_useFakeLighting, material.useFakeLighting == false ? 0 : 1);
 	}
 }
