@@ -1,11 +1,15 @@
 package com.unnamedgame.main;
 
+import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
+import java.util.*;
+import java.util.List;
 
 import javax.imageio.*;
 
 import com.openglengine.core.*;
+import com.openglengine.entitity.*;
 import com.openglengine.renderer.*;
 import com.openglengine.renderer.material.*;
 import com.openglengine.renderer.model.*;
@@ -17,20 +21,32 @@ import com.unnamedgame.models.*;
 public class TerrainChunk implements RenderDelegate, ResourceManager {
 
 	private Model model;
-	private float x;
-	private float z;
+	private Vector3f pos;
 
 	private float[][] heights;
+	private int[][] colors;
+
+	private Random random = new Random();
+
+	// TODO: refactor
+	private List<Entity> terrainDecoration;
 
 	public TerrainChunk(Shader shader, Material material, float x, float z) {
-		this.model = this.generateTerrainChunk(shader, material, UnnamedGame.TERRAIN_FOLDER + "heightmap.png");
-		this.x = x;
-		this.z = z;
-
+		this.pos = new Vector3f(x, 0, z);
+		this.terrainDecoration = new ArrayList<>();
+		this.model = this.generateTerrainChunkModel(UnnamedGame.TERRAIN_FOLDER + "blendmap.png",
+				UnnamedGame.TERRAIN_FOLDER + "heightmap.png", shader, material);
+		this.generateTerrainDecoration(UnnamedGame.TERRAIN_FOLDER + "blendmap.png");
 	}
 
-	public Model getModel() {
-		return this.model;
+	public void update() {
+		// TODO: implement decoration frustum culling
+		for (Entity deco : this.terrainDecoration) {
+			deco.update();
+			Engine.getRenderManager().processEntity(deco);
+		}
+
+		Engine.getRenderManager().processRenderObject(this.model, this);
 	}
 
 	/**
@@ -41,8 +57,8 @@ public class TerrainChunk implements RenderDelegate, ResourceManager {
 	 * @return
 	 */
 	public float getHeightAt(float worldX, float worldZ) {
-		float terrainX = worldX - this.x;
-		float terrainZ = worldZ - this.z;
+		float terrainX = worldX - this.pos.x;
+		float terrainZ = worldZ - this.pos.z;
 		float gridSquareSize = Terrain.CHUNK_SIZE / ((float) heights.length - 1);
 		int gridX = (int) Math.floor(terrainX / gridSquareSize);
 		int gridZ = (int) Math.floor(terrainZ / gridSquareSize);
@@ -72,7 +88,76 @@ public class TerrainChunk implements RenderDelegate, ResourceManager {
 		return answer;
 	}
 
-	private Model generateTerrainChunk(Shader shader, Material material, String heightMapPath) {
+	/**
+	 * Get color of these coordinates in chunk
+	 * 
+	 * @param x
+	 * @param z
+	 * @return
+	 */
+	public Color getColorAt(float worldX, float worldZ) {
+		float terrainX = worldX - this.pos.x;
+		float terrainZ = worldZ - this.pos.z;
+		float gridSquareSize = Terrain.CHUNK_SIZE / ((float) colors.length - 1);
+		int gridX = (int) Math.floor(terrainX / gridSquareSize);
+		int gridZ = (int) Math.floor(terrainZ / gridSquareSize);
+
+		if (gridX >= colors.length - 1)
+			gridX = colors.length - 2;
+		if (gridZ >= colors.length - 1)
+			gridZ = colors.length - 2;
+		if (gridX < 0)
+			gridX = 0;
+		if (gridZ < 0)
+			gridZ = 0;
+
+		float xCoord = (terrainX % gridSquareSize) / gridSquareSize;
+		float zCoord = (terrainZ % gridSquareSize) / gridSquareSize;
+		int answer;
+		if (xCoord <= (1 - zCoord)) {
+			answer = (int) MathUtils.barryCentric(new Vector3f(0, colors[gridX][gridZ], 0),
+					new Vector3f(1, colors[gridX + 1][gridZ], 0), new Vector3f(0, colors[gridX][gridZ + 1], 1),
+					new Vector2f(xCoord, zCoord));
+		} else {
+			answer = (int) MathUtils.barryCentric(new Vector3f(1, colors[gridX + 1][gridZ], 0),
+					new Vector3f(1, colors[gridX + 1][gridZ + 1], 1), new Vector3f(0, colors[gridX][gridZ + 1], 1),
+					new Vector2f(xCoord, zCoord));
+		}
+
+		return new Color(answer, true);
+	}
+
+	private void generateTerrainDecoration(String blendMapPath) {
+		// Place fern using terrain height as indicator
+		for (int i = 0; i < 20; i++) {
+			Vector3f pos = new Vector3f();
+			Color color = null;
+			do {
+				pos.x = random.nextFloat() * Terrain.CHUNK_SIZE + this.pos.x;
+				pos.z = random.nextFloat() * Terrain.CHUNK_SIZE + this.pos.z;
+				pos.y = this.getHeightAt(pos.x, pos.z);
+				color = this.getColorAt(pos.x, pos.z);
+			} while (pos.y > -5f || color.getBlue() > 0 || color.getRed() > 0);
+			this.terrainDecoration.add(EntityFactory.getEntityByName(pos, new Vector3f(2, 2, 2), "fern"));
+		}
+
+		// Place trees
+		for (int i = 0; i < 100; i++) {
+			Vector3f pos = new Vector3f();
+			Color color = null;
+			do {
+				pos.x = random.nextFloat() * Terrain.CHUNK_SIZE + this.pos.x;
+				pos.z = random.nextFloat() * Terrain.CHUNK_SIZE + this.pos.z;
+				pos.y = this.getHeightAt(pos.x, pos.z) - 3f;
+				color = this.getColorAt(pos.x, pos.z);
+			} while (pos.y > 5f || color.getBlue() > 0 || color.getRed() > 0);
+			this.terrainDecoration.add(EntityFactory.getEntityByName(pos, new Vector3f(2, 2, 2), "tree"));
+		}
+
+	}
+
+	private Model generateTerrainChunkModel(String blendMapPath, String heightMapPath, Shader shader,
+			Material material) {
 		BufferedImage heightMap = null;
 		try {
 			heightMap = ImageIO.read(new File(heightMapPath));
@@ -80,8 +165,18 @@ public class TerrainChunk implements RenderDelegate, ResourceManager {
 			e.printStackTrace();
 			Engine.getLogger().err("Could not load terrain heightmap! " + e);
 		}
-		int vertexcount = heightMap.getHeight();
+		BufferedImage blendMap = null;
+		try {
+			blendMap = ImageIO.read(new File(blendMapPath));
+		} catch (IOException e) {
+			e.printStackTrace();
+			Engine.getLogger().err("Could not load terrain heightmap! " + e);
+		}
 
+		assert blendMap.getHeight() == heightMap.getHeight() : "Blendmap and Heightmap must be the same size!";
+
+		int vertexcount = heightMap.getHeight();
+		this.colors = new int[vertexcount][vertexcount];
 		this.heights = new float[vertexcount][vertexcount];
 
 		int count = vertexcount * vertexcount;
@@ -95,7 +190,13 @@ public class TerrainChunk implements RenderDelegate, ResourceManager {
 				// Calculate vertex position
 				vertices[vertexPointer * 3] = (float) j / ((float) vertexcount - 1) * Terrain.CHUNK_SIZE;
 				float height = getHeight(j, i, heightMap);
-				heights[j][i] = height;
+
+				// Parse heights
+				this.heights[j][i] = height;
+
+				// Parse colors
+				this.colors[j][i] = blendMap.getRGB(j, i);
+
 				vertices[vertexPointer * 3 + 1] = height;
 				vertices[vertexPointer * 3 + 2] = (float) i / ((float) vertexcount - 1) * Terrain.CHUNK_SIZE;
 
@@ -127,7 +228,8 @@ public class TerrainChunk implements RenderDelegate, ResourceManager {
 			}
 		}
 
-		return new TerrainChunkModel(shader, material, vertices, textureCoords, normals, indices);
+		return new TerrainChunkModel(Engine.getTextureManager().loadTexture(blendMapPath), shader, material, vertices,
+				textureCoords, normals, indices);
 	}
 
 	private Vector3f calculateNormal(int x, int z, BufferedImage heightMap) {
@@ -157,7 +259,7 @@ public class TerrainChunk implements RenderDelegate, ResourceManager {
 		// Set model transform
 		TransformationMatrixStack tms = Engine.getModelMatrixStack();
 		tms.push();
-		tms.translate(new Vector3f(this.x, 0, this.z));
+		tms.translate(new Vector3f(this.pos.x, this.pos.y, this.pos.z));
 	}
 
 	@Override
@@ -168,5 +270,6 @@ public class TerrainChunk implements RenderDelegate, ResourceManager {
 	@Override
 	public void cleanup() {
 		this.model.cleanup();
+		this.terrainDecoration.forEach(d -> d.cleanup());
 	}
 }

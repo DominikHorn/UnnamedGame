@@ -23,7 +23,8 @@ public class TerrainChunkModel extends Model {
 	private Texture bTexture = null;
 	private Texture blendMap = null;
 
-	public TerrainChunkModel(Shader shader, Material material, float[] positions, float[] texCoords, float[] normals,
+	public TerrainChunkModel(Texture blendMap, Shader shader, Material material, float[] positions, float[] texCoords,
+			float[] normals,
 			int[] indices) {
 		// Initialize to 0
 		super(0, indices.length, shader, material);
@@ -35,7 +36,7 @@ public class TerrainChunkModel extends Model {
 		this.rTexture = Engine.getTextureManager().loadTexture(UnnamedGame.TEX_FOLDER + "mud.png");
 		this.gTexture = Engine.getTextureManager().loadTexture(UnnamedGame.TEX_FOLDER + "flowers.png");
 		this.bTexture = Engine.getTextureManager().loadTexture(UnnamedGame.TEX_FOLDER + "path.png");
-		this.blendMap = Engine.getTextureManager().loadTexture(UnnamedGame.TERRAIN_FOLDER + "heightmap.png");
+		this.blendMap = blendMap;
 
 		// Load actual values
 		this.loadToVAO(positions, texCoords, normals, indices);

@@ -54,12 +54,6 @@ public class EntityFactory {
 				fernModelData.getNormals(), fernModelData.getIndices());
 		fernModelData.cleanup();
 
-		ModelData grassModelData = Engine.getModelDataManager().loadModelData(UnnamedGame.MODEL_FOLDER + "grass.obj");
-		SimpleTexturedModel grassModel = new SimpleTexturedModel(UnnamedGame.TEX_FOLDER + "grass.png", standardShader,
-				new DynamicMaterial(0, 1, true, true), grassModelData.getVertices(), grassModelData.getTextureCoords(),
-				grassModelData.getNormals(), grassModelData.getIndices());
-		grassModelData.cleanup();
-
 		ModelData treeModelData = Engine.getModelDataManager().loadModelData(UnnamedGame.MODEL_FOLDER + "tree.obj");
 		SimpleTexturedModel treeModel = new SimpleTexturedModel(UnnamedGame.TEX_FOLDER + "tree.png", standardShader,
 				new DynamicMaterial(0, 1, false, false), treeModelData.getVertices(), treeModelData.getTextureCoords(),
@@ -86,9 +80,8 @@ public class EntityFactory {
 		models.put("dragon", dragonModel);
 		models.put("bunny", bunnyModel);
 		models.put("fern", fernModel);
-		models.put("tree", treeModel);
-		models.put("lowPolyTree", lowPolyTreeModel);
-		models.put("grass", grassModel);
+		// models.put("tree", treeModel);
+		models.put("tree", lowPolyTreeModel);
 		models.put("player", playerModel);
 	}
 
