@@ -111,6 +111,12 @@ public class EntityFactory {
 		return e;
 	}
 
+	public static Entity getCamera(Vector3f position) {
+		Entity e = new Entity(position, new Vector3f(), new Vector3f());
+		e.addComponent(new CameraComponentFlyoverObserver(1, 0.1f));
+		return e;
+	}
+
 	public static Entity getRandomEntity(Vector3f position) {
 		int randHashKeyPos = random.nextInt(models.keySet().size());
 		String modelname = new ArrayList<String>(models.keySet()).get(randHashKeyPos);

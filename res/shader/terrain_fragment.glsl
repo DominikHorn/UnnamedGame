@@ -23,14 +23,14 @@ uniform float ambientBrightness;
 void main(void) {
 	vec4 blendMapColor = texture(blendMap, pass_textureCoords);
 
-	float backTextureAmount = 1 - (blendMapColor.r + blendMapColor.g + blendMapColor.b);
+	float backTextureAmount = 1 - blendMapColor.r;
 	vec2 tiledCoords = pass_textureCoords * 40.0;
 	vec4 backgroundTextureColor = texture(backgroundTexture, tiledCoords) * backTextureAmount;
 	vec4 rTextureColor = texture(rTexture, tiledCoords) * blendMapColor.r;
 	vec4 gTextureColor = texture(gTexture, tiledCoords) * blendMapColor.g;
 	vec4 bTextureColor = texture(bTexture, tiledCoords) * blendMapColor.b;
 
-	vec4 totalColor = backgroundTextureColor + rTextureColor + gTextureColor + bTextureColor;
+	vec4 totalColor = backgroundTextureColor;// + rTextureColor + gTextureColor + bTextureColor;
 
 	vec3 unitNormal = normalize(surfaceNormal);
 	vec3 unitLightVector = normalize(toLightVector);

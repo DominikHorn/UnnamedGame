@@ -33,6 +33,45 @@ public class TerrainChunk implements RenderDelegate, ResourceManager {
 		return this.model;
 	}
 
+	/**
+	 * Get height of these coordinates in chunk
+	 * 
+	 * @param x
+	 * @param z
+	 * @return
+	 */
+	public float getHeightAt(float worldX, float worldZ) {
+		float terrainX = worldX - this.x;
+		float terrainZ = worldZ - this.z;
+		float gridSquareSize = Terrain.CHUNK_SIZE / ((float) heights.length - 1);
+		int gridX = (int) Math.floor(terrainX / gridSquareSize);
+		int gridZ = (int) Math.floor(terrainZ / gridSquareSize);
+
+		if (gridX >= heights.length - 1)
+			gridX = heights.length - 2;
+		if (gridZ >= heights.length - 1)
+			gridZ = heights.length - 2;
+		if (gridX < 0)
+			gridX = 0;
+		if (gridZ < 0)
+			gridZ = 0;
+
+		float xCoord = (terrainX % gridSquareSize) / gridSquareSize;
+		float zCoord = (terrainZ % gridSquareSize) / gridSquareSize;
+		float answer;
+		if (xCoord <= (1 - zCoord)) {
+			answer = MathUtils.barryCentric(new Vector3f(0, heights[gridX][gridZ], 0),
+					new Vector3f(1, heights[gridX + 1][gridZ], 0), new Vector3f(0, heights[gridX][gridZ + 1], 1),
+					new Vector2f(xCoord, zCoord));
+		} else {
+			answer = MathUtils.barryCentric(new Vector3f(1, heights[gridX + 1][gridZ], 0),
+					new Vector3f(1, heights[gridX + 1][gridZ + 1], 1), new Vector3f(0, heights[gridX][gridZ + 1], 1),
+					new Vector2f(xCoord, zCoord));
+		}
+
+		return answer;
+	}
+
 	private Model generateTerrainChunk(Shader shader, Material material, String heightMapPath) {
 		BufferedImage heightMap = null;
 		try {
@@ -130,5 +169,4 @@ public class TerrainChunk implements RenderDelegate, ResourceManager {
 	public void cleanup() {
 		this.model.cleanup();
 	}
-
 }

@@ -11,6 +11,7 @@ import com.openglengine.renderer.material.*;
 import com.openglengine.renderer.model.*;
 import com.openglengine.renderer.shader.*;
 import com.openglengine.renderer.texture.*;
+import com.unnamedgame.main.*;
 
 public class TerrainChunkModel extends Model {
 	/** Internal list used to keep track of all the vbos that were create for this model */
@@ -22,20 +23,19 @@ public class TerrainChunkModel extends Model {
 	private Texture bTexture = null;
 	private Texture blendMap = null;
 
-	public TerrainChunkModel(Shader shader, Material material, float[] positions,
-			float[] texCoords, float[] normals,
+	public TerrainChunkModel(Shader shader, Material material, float[] positions, float[] texCoords, float[] normals,
 			int[] indices) {
 		// Initialize to 0
 		super(0, indices.length, shader, material);
 
 		// Initialize attributes
 		this.vbos = new ArrayList<>();
-		
-		this.backgroundTexture = Engine.getTextureManager().loadTexture("res/tex/terrain.png");
-		this.rTexture = Engine.getTextureManager().loadTexture("res/tex/mud.png");
-		this.gTexture = Engine.getTextureManager().loadTexture("res/tex/flowers.png");
-		this.bTexture = Engine.getTextureManager().loadTexture("res/tex/path.png");
-		this.blendMap = Engine.getTextureManager().loadTexture("res/tex/blendmap.png");
+
+		this.backgroundTexture = Engine.getTextureManager().loadTexture(UnnamedGame.TEX_FOLDER + "terrain.png");
+		this.rTexture = Engine.getTextureManager().loadTexture(UnnamedGame.TEX_FOLDER + "mud.png");
+		this.gTexture = Engine.getTextureManager().loadTexture(UnnamedGame.TEX_FOLDER + "flowers.png");
+		this.bTexture = Engine.getTextureManager().loadTexture(UnnamedGame.TEX_FOLDER + "path.png");
+		this.blendMap = Engine.getTextureManager().loadTexture(UnnamedGame.TERRAIN_FOLDER + "heightmap.png");
 
 		// Load actual values
 		this.loadToVAO(positions, texCoords, normals, indices);

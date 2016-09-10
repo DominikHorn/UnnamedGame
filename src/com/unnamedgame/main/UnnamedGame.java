@@ -49,9 +49,14 @@ public class UnnamedGame extends Basic3DGame {
 		Engine.getInputManager().setMouseGrabbed(false);
 
 		TERRAIN = new Terrain();
-		this.player = EntityFactory.getPlayerEntity(new Vector3f(0, 0, -20), new Vector3f(0.5f, 0.5f, 0.5f));
-	}
+		TERRAIN.getHeightAt(0, 0);
+		TERRAIN.getHeightAt(-200, 1);
+		TERRAIN.getHeightAt(-5000, -5000);
+		TERRAIN.getHeightAt(30, -50000);
+		TERRAIN.getHeightAt(400, 5000);
 
+		this.player = EntityFactory.getPlayerEntity(new Vector3f(0, 0, 0), new Vector3f(0.5f, 0.5f, 0.5f));
+	}
 
 	@Override
 	protected void update() {
