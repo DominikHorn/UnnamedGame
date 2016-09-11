@@ -52,7 +52,7 @@ public class UnnamedGame extends Basic3DGame {
 		SKY_COLOR = new Vector3f(1f, 1f, 1f);
 
 //		 Setup sun
-		SUN = new Sun(0.1);
+		SUN = new Sun(0.01);
 
 		// Load models
 		EntityFactory.load();

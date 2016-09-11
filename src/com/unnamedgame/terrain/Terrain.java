@@ -11,11 +11,11 @@ import com.unnamedgame.shaders.*;
 public class Terrain implements ResourceManager {
 	public static final float CHUNK_SIZE = 2000;
 	public static final float NO_TERRAIN_HEIGHT = -2000;
-	protected static final float MAX_HEIGHT = 300;
+	public static final float MAX_HEIGHT = 300;
+	public static final int TERRAIN_WIDTH = 2;
+	public static final int TERRAIN_DEPTH = 2;
 	protected static final float MIN_HEIGHT = -MAX_HEIGHT;
 	protected static final float MAX_PIXEL_COLOR = 256 * 256 * 256;
-	private static final int TERRAIN_WIDTH = 2;
-	private static final int TERRAIN_DEPTH = 2;
 
 	// TODO: refactor
 	private TerrainShader terrainShader;
