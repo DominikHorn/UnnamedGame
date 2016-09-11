@@ -1,7 +1,6 @@
 package com.unnamedgame.shaders;
 
 import com.openglengine.renderer.shader.*;
-import com.openglengine.util.math.*;
 import com.unnamedgame.main.*;
 
 public class TerrainShader extends Shader {
@@ -41,12 +40,6 @@ public class TerrainShader extends Shader {
 	/** uniform location of sky color */
 	public int location_blendMap;
 
-	private Vector3f skyColor;
-
-	public TerrainShader(Vector3f skyColor) {
-		this.skyColor = skyColor;
-	}
-
 	@Override
 	protected void getAllUniformLocations() {
 		super.getAllUniformLocations();
@@ -68,13 +61,13 @@ public class TerrainShader extends Shader {
 	@Override
 	public void uploadGlobalUniforms() {
 		// TODO: refactor sky color
-		super.loadVector3f(location_skyColor, this.skyColor);
+		super.loadVector3f(location_skyColor, UnnamedGame.SUN.color);
 
 		// TODO: refactor lighting
 		super.loadVector3f(location_sunPosition, UnnamedGame.SUN.position);
 		super.loadVector3f(location_sunColor, UnnamedGame.SUN.color);
 		super.loadFloat(location_sunBrightness, UnnamedGame.SUN.brightness);
-		super.loadFloat(location_ambientBrightness, 0.2f); // TODO: refactor
+		super.loadFloat(location_ambientBrightness, 0.0f); // TODO: refactor
 		super.loadInt(location_backgroundTexture, 0);
 		super.loadInt(location_rTexture, 1);
 		super.loadInt(location_gTexture, 2);

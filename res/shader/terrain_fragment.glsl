@@ -18,6 +18,8 @@ uniform vec3 sunColor;
 uniform vec3 skyColor;
 uniform float ambientBrightness;
 uniform float sunBrightness;
+uniform float shineDamper = 1;
+uniform float reflectivity = 0;
 
 void main(void) {
 	vec4 blendMapColor = texture(blendMap, pass_textureCoords);
@@ -37,8 +39,17 @@ void main(void) {
 	float nDotl = dot(unitNormal, unitLightVector);
 	float brightness = max(nDotl, ambientBrightness);
 	vec3 diffuse = brightness * sunColor;
+
+	vec3 unitVectorToCamera = normalize(toCameraVector);
+	vec3 lightDirection = -unitLightVector;
+	vec3 reflectedLightDirection = reflect(lightDirection,unitNormal);
 	
-	out_color = vec4(diffuse,1.0) * totalColor;
+	float specularFactor = dot(reflectedLightDirection , unitVectorToCamera);
+	specularFactor = max(specularFactor, 0.0);
+	float dampedFactor = pow(specularFactor, shineDamper);
+	vec3 finalSpecular = dampedFactor * reflectivity * sunColor;
+
+	out_color = vec4(diffuse + 0.1, 1.0) * totalColor + vec4(finalSpecular, 1.0);
 	
 	// Enable this line for fog calculation
 	out_color = mix(vec4(skyColor, 1.0), out_color, visibility);

@@ -1,8 +1,7 @@
 package com.unnamedgame.shaders;
 
 import com.openglengine.renderer.shader.*;
-import com.openglengine.util.*;
-import com.openglengine.util.math.*;
+import com.unnamedgame.main.*;
 
 public class DynamicShader extends Shader {
 	/** uniform location of the lights position shader attrib */
@@ -32,16 +31,6 @@ public class DynamicShader extends Shader {
 	/** uniform location of sky color */
 	public int location_skyColor;
 
-	/** TODO: refactor */
-	private LightSource lightSource;
-
-	private Vector3f skyColor;
-
-	public DynamicShader(LightSource lightSource, Vector3f skyColor) {
-		this.lightSource = lightSource;
-		this.skyColor = skyColor;
-	}
-
 	@Override
 	protected void getAllUniformLocations() {
 		super.getAllUniformLocations();
@@ -60,12 +49,12 @@ public class DynamicShader extends Shader {
 	@Override
 	public void uploadGlobalUniforms() {
 		// TODO: refactor sky color
-		super.loadVector3f(location_skyColor, this.skyColor);
+		super.loadVector3f(location_skyColor, UnnamedGame.SUN.color);
 
 		// TODO: refactor light stuff
-		super.loadVector3f(location_lightPosition, this.lightSource.position);
-		super.loadVector3f(location_lightColor, this.lightSource.color);
-		super.loadFloat(location_lightBrightness, this.lightSource.brightness);
-		super.loadFloat(location_ambientBrightness, 0.2f); // TODO: refactor
+		super.loadVector3f(location_lightPosition, UnnamedGame.SUN.position);
+		super.loadVector3f(location_lightColor, UnnamedGame.SUN.color);
+		super.loadFloat(location_lightBrightness, UnnamedGame.SUN.brightness);
+		super.loadFloat(location_ambientBrightness, 0.0f); // TODO: refactor
 	}
 }

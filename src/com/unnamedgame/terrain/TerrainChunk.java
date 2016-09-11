@@ -248,8 +248,6 @@ public class TerrainChunk implements RenderDelegate, ResourceManager {
 					vertices[index2 * 3 + 2]);
 			Vector3f third = new Vector3f(vertices[index3 * 3 + 0], vertices[index3 * 3 + 1], vertices[index3 * 3 + 2]);
 
-			// Vector3f normal = first.getSubtractionResult(second)
-			// .getCrossProductResult(third.getSubtractionResult(second)).scaleVector(-1f);
 			Vector3f normal = third.getSubtractionResult(second)
 					.getCrossProductResult(first.getSubtractionResult(second));
 
