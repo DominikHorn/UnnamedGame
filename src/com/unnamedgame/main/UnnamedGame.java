@@ -9,6 +9,7 @@ import com.openglengine.entitity.*;
 import com.openglengine.util.*;
 import com.openglengine.util.Logger.*;
 import com.openglengine.util.math.*;
+import com.unnamedgame.terrain.*;
 
 /**
  * Game entry point
@@ -32,7 +33,7 @@ public class UnnamedGame extends Basic3DGame {
 	public static String SHADER_FOLDER = RES_FOLDER + "shader/";
 	public static String TERRAIN_FOLDER = RES_FOLDER + "terrain/";
 
-	public static MovingLightSource SUN_SOURCE;
+	public static LightSource SUN;
 	public static Vector3f SKY_COLOR;
 	public static Terrain TERRAIN;
 
@@ -50,13 +51,8 @@ public class UnnamedGame extends Basic3DGame {
 		// Must be setup before entity factory
 		SKY_COLOR = new Vector3f(1f, 1f, 1f);
 
-		// Setup sun
-		SUN_SOURCE = new MovingLightSource((source, tickCount) -> {
-			// 1 turn every 60 ticks -> 60 ticks must equal 2pi ->
-			double result = ((double) 0.005 * tickCount / (2 * Math.PI)) % (2 * Math.PI);
-			source.position.y = (float) Math.sin(result) * 500f;
-			source.position.x = (float) Math.cos(result) * 500f;
-		}, new Vector3f(0, 500f, 0), new Vector3f(1.0f, 0.86f, 0.57f), 0f);
+//		 Setup sun
+		SUN = new Sun();
 
 		// Load models
 		EntityFactory.load();

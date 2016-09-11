@@ -1,15 +1,15 @@
 package com.unnamedgame.shaders;
 
 import com.openglengine.renderer.shader.*;
-import com.openglengine.util.*;
 import com.openglengine.util.math.*;
+import com.unnamedgame.main.*;
 
 public class TerrainShader extends Shader {
 	/** uniform location of the lights position shader attrib */
-	public int location_lightPosition;
+	public int location_sunPosition;
 
 	/** uniform location of the lights color shader attrib */
-	public int location_lightColor;
+	public int location_sunColor;
 
 	/** uniform location of the shine dampener shader attrib */
 	public int location_shineDamper;
@@ -21,7 +21,7 @@ public class TerrainShader extends Shader {
 	public int location_ambientBrightness;
 
 	/** uniform location of light source brightness */
-	public int location_lightBrightness;
+	public int location_sunBrightness;
 
 	/** uniform location of sky color */
 	public int location_skyColor;
@@ -41,13 +41,9 @@ public class TerrainShader extends Shader {
 	/** uniform location of sky color */
 	public int location_blendMap;
 
-	/** TODO: refactor */
-	private LightSource lightSource;
-
 	private Vector3f skyColor;
 
-	public TerrainShader(LightSource lightSource, Vector3f skyColor) {
-		this.lightSource = lightSource;
+	public TerrainShader(Vector3f skyColor) {
 		this.skyColor = skyColor;
 	}
 
@@ -55,12 +51,12 @@ public class TerrainShader extends Shader {
 	protected void getAllUniformLocations() {
 		super.getAllUniformLocations();
 
-		location_lightPosition = super.getUniformLocation("lightPosition");
-		location_lightColor = super.getUniformLocation("lightColor");
+		location_sunPosition = super.getUniformLocation("sunPosition");
+		location_sunColor = super.getUniformLocation("sunColor");
+		location_sunBrightness = super.getUniformLocation("sunBrightness");
 		location_shineDamper = super.getUniformLocation("shineDamper");
 		location_reflectivity = super.getUniformLocation("reflectivity");
 		location_ambientBrightness = super.getUniformLocation("ambientBrightness");
-		location_lightBrightness = super.getUniformLocation("lightBrightness");
 		location_skyColor = super.getUniformLocation("skyColor");
 		location_backgroundTexture = super.getUniformLocation("backgroundTexture");
 		location_rTexture = super.getUniformLocation("rTexture");
@@ -75,9 +71,9 @@ public class TerrainShader extends Shader {
 		super.loadVector3f(location_skyColor, this.skyColor);
 
 		// TODO: refactor lighting
-		super.loadVector3f(location_lightPosition, this.lightSource.position);
-		super.loadVector3f(location_lightColor, this.lightSource.color);
-		super.loadFloat(location_lightBrightness, this.lightSource.brightness);
+		super.loadVector3f(location_sunPosition, UnnamedGame.SUN.position);
+		super.loadVector3f(location_sunColor, UnnamedGame.SUN.color);
+		super.loadFloat(location_sunBrightness, UnnamedGame.SUN.brightness);
 		super.loadFloat(location_ambientBrightness, 0.2f); // TODO: refactor
 		super.loadInt(location_backgroundTexture, 0);
 		super.loadInt(location_rTexture, 1);

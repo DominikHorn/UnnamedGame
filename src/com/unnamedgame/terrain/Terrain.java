@@ -1,9 +1,10 @@
-package com.unnamedgame.main;
+package com.unnamedgame.terrain;
 
 import java.util.*;
 
 import com.openglengine.renderer.material.*;
 import com.openglengine.util.*;
+import com.unnamedgame.main.*;
 import com.unnamedgame.materials.*;
 import com.unnamedgame.shaders.*;
 
@@ -25,10 +26,10 @@ public class Terrain implements ResourceManager {
 	private List<TerrainChunk> visibleChunks;
 
 	public Terrain() {
-		this.terrainShader = new TerrainShader(UnnamedGame.SUN_SOURCE, UnnamedGame.SKY_COLOR);
+		this.terrainShader = new TerrainShader(UnnamedGame.SKY_COLOR);
 		this.terrainShader.compileShaderFromFiles(UnnamedGame.SHADER_FOLDER + "terrain_vertex.glsl",
 				UnnamedGame.SHADER_FOLDER + "terrain_fragment.glsl");
-		this.terrainMaterial = new TerrainMaterial(0, 1);
+		this.terrainMaterial = new TerrainMaterial();
 
 		this.terrainChunks = new TerrainChunk[TERRAIN_WIDTH][TERRAIN_DEPTH];
 		this.visibleChunks = new ArrayList<>();

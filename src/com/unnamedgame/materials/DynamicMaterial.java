@@ -25,8 +25,8 @@ public class DynamicMaterial extends Material<DynamicShader> {
 
 		shader.loadFloat(shader.location_shineDamper, this.shineDamper);
 		shader.loadFloat(shader.location_reflectivity, this.reflectivity);
-		shader.loadFloat(shader.location_transparent, this.transparent == false ? 0 : 1);
-		shader.loadFloat(shader.location_useFakeLighting, this.useFakeLighting == false ? 0 : 1);
+		shader.loadFloat(shader.location_transparent, this.transparent ? 1 : 0);
+		shader.loadFloat(shader.location_useFakeLighting, this.useFakeLighting ? 1 : 0);
 	}
 
 	@Override

@@ -26,7 +26,7 @@ public class EntityFactory {
 		// TODO: refactor
 		GL11.glClearColor(UnnamedGame.SKY_COLOR.x, UnnamedGame.SKY_COLOR.y, UnnamedGame.SKY_COLOR.z, 1.0f);
 
-		standardShader = new DynamicShader(UnnamedGame.SUN_SOURCE, UnnamedGame.SKY_COLOR);
+		standardShader = new DynamicShader(UnnamedGame.SUN, UnnamedGame.SKY_COLOR);
 		standardShader.compileShaderFromFiles(UnnamedGame.SHADER_FOLDER + "standard_vertex.glsl",
 				UnnamedGame.SHADER_FOLDER + "standard_fragment.glsl");
 

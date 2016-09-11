@@ -1,4 +1,4 @@
-package com.unnamedgame.main;
+package com.unnamedgame.terrain;
 
 import java.awt.*;
 import java.awt.image.*;
@@ -16,6 +16,7 @@ import com.openglengine.renderer.model.*;
 import com.openglengine.renderer.shader.*;
 import com.openglengine.util.*;
 import com.openglengine.util.math.*;
+import com.unnamedgame.main.*;
 import com.unnamedgame.models.*;
 import com.unnamedgame.shaders.*;
 
@@ -35,9 +36,13 @@ public class TerrainChunk implements RenderDelegate, ResourceManager {
 	public TerrainChunk(TerrainShader shader, Material<TerrainShader> material, float x, float z) {
 		this.pos = new Vector3f(x, 0, z);
 		this.terrainDecoration = new ArrayList<>();
+
+		Engine.getLogger().info("Generating terrain.");
 		this.model = this.generateTerrainChunkModel(UnnamedGame.TERRAIN_FOLDER + "blendmap.png",
 				UnnamedGame.TERRAIN_FOLDER + "heightmap.png", shader, material);
+		Engine.getLogger().info("Adding decoration.");
 		this.generateTerrainDecoration();
+		Engine.getLogger().info("Done!");
 	}
 
 	public void update() {
@@ -158,8 +163,7 @@ public class TerrainChunk implements RenderDelegate, ResourceManager {
 	}
 
 	private Model<TerrainShader> generateTerrainChunkModel(String blendMapPath, String heightMapPath,
-			TerrainShader shader,
-			Material<TerrainShader> material) {
+			TerrainShader shader, Material<TerrainShader> material) {
 		BufferedImage heightMap = null;
 		try {
 			heightMap = ImageIO.read(new File(heightMapPath));
@@ -202,12 +206,6 @@ public class TerrainChunk implements RenderDelegate, ResourceManager {
 				vertices[vertexPointer * 3 + 1] = height;
 				vertices[vertexPointer * 3 + 2] = (float) i / ((float) vertexcount - 1) * Terrain.CHUNK_SIZE;
 
-				// Calculate normals
-				Vector3f normal = calculateNormal(j, i, heightMap);
-				normals[vertexPointer * 3] = normal.x;
-				normals[vertexPointer * 3 + 1] = normal.y;
-				normals[vertexPointer * 3 + 2] = normal.z;
-
 				// Calculate tex coord position
 				textureCoords[vertexPointer * 2] = (float) j / ((float) vertexcount - 1);
 				textureCoords[vertexPointer * 2 + 1] = (float) i / ((float) vertexcount - 1);
@@ -230,19 +228,43 @@ public class TerrainChunk implements RenderDelegate, ResourceManager {
 			}
 		}
 
+		this.calculateNormals(normals, vertices, indices);
+
 		return new TerrainChunkModel(Engine.getTextureManager().loadTexture(blendMapPath), shader, material, vertices,
 				textureCoords, normals, indices);
 	}
 
-	private Vector3f calculateNormal(int x, int z, BufferedImage heightMap) {
-		float heightL = getHeight(x - 1, z, heightMap);
-		float heightR = getHeight(x + 1, z, heightMap);
-		float heightD = getHeight(x, z - 1, heightMap);
-		float heightU = getHeight(x, z + 1, heightMap);
+	private void calculateNormals(float[] normals, float[] vertices, int[] indices) {
+		Engine.getLogger().info("Terrain mesh has " + normals.length + " normals, " + vertices.length + " vertices and "
+				+ indices.length + " indices.");
 
-		Vector3f normal = new Vector3f(heightL - heightR, 2f, heightD - heightU);
-		normal.normalise();
-		return normal;
+		for (int i = 0; i < indices.length - 3; i += 3) {
+			int index1 = indices[i + 0];
+			int index2 = indices[i + 1];
+			int index3 = indices[i + 2];
+
+			Vector3f first = new Vector3f(vertices[index1 * 3 + 0], vertices[index1 * 3 + 1], vertices[index1 * 3 + 2]);
+			Vector3f second = new Vector3f(vertices[index2 * 3 + 0], vertices[index2 * 3 + 1],
+					vertices[index2 * 3 + 2]);
+			Vector3f third = new Vector3f(vertices[index3 * 3 + 0], vertices[index3 * 3 + 1], vertices[index3 * 3 + 2]);
+
+			// Vector3f normal = first.getSubtractionResult(second)
+			// .getCrossProductResult(third.getSubtractionResult(second)).scaleVector(-1f);
+			Vector3f normal = third.getSubtractionResult(second)
+					.getCrossProductResult(first.getSubtractionResult(second));
+
+			normals[index1 * 3 + 0] = normal.x;
+			normals[index1 * 3 + 1] = normal.y;
+			normals[index1 * 3 + 2] = normal.z;
+
+			normals[index2 * 3 + 0] = normal.x;
+			normals[index2 * 3 + 1] = normal.y;
+			normals[index2 * 3 + 2] = normal.z;
+
+			normals[index3 * 3 + 0] = normal.x;
+			normals[index3 * 3 + 1] = normal.y;
+			normals[index3 * 3 + 2] = normal.z;
+		}
 	}
 
 	private float getHeight(int x, int z, BufferedImage heightMap) {
