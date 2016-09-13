@@ -37,7 +37,7 @@ public class UnnamedGame extends Basic3DGame {
 	public static Vector3f SKY_COLOR;
 	public static Terrain TERRAIN;
 
-	private RenderableEntity player;
+	private RenderableEntity<?> player;
 
 	// TODO: tmp debug
 	private boolean wireframe = false;
@@ -52,7 +52,7 @@ public class UnnamedGame extends Basic3DGame {
 		SKY_COLOR = new Vector3f(1f, 1f, 1f);
 
 //		 Setup sun
-		SUN = new Sun(0.01);
+		SUN = new Sun(0.002);
 
 		// Load models
 		EntityFactory.load();
@@ -86,7 +86,7 @@ public class UnnamedGame extends Basic3DGame {
 		this.player.update();
 
 		// Add player to rendering queue
-		Engine.getRenderManager().processRenderObject(this.player.model, this.player);
+		Engine.getRenderManager().processRenderObject(this.player.getModel(), this.player);
 
 		// Check whether or not we should quit
 		if (this.isQuitRequestedByEngine() || Engine.getInputManager().isKeyDown(InputManager.KEY_ESC))

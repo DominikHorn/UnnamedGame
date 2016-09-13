@@ -24,18 +24,15 @@ public class TerrainChunkModel extends Model<TerrainShader> {
 	private Texture blendMap = null;
 
 	public TerrainChunkModel(Texture blendMap, TerrainShader shader, Material<TerrainShader> material,
-			float[] positions,
-			float[] texCoords,
-			float[] normals,
-			int[] indices) {
+			float[] positions, float[] texCoords, float[] normals, int[] indices) {
 		// Initialize to 0
-		super(0, indices.length, shader, material);
+		super(indices.length, shader, material);
 
 		// Initialize attributes
 		this.vbos = new ArrayList<>();
 
 		this.backgroundTexture = Engine.getTextureManager().loadTexture(UnnamedGame.TEX_FOLDER + "terrain.png");
-		this.rTexture = Engine.getTextureManager().loadTexture(UnnamedGame.TEX_FOLDER + "mud.png");
+		this.rTexture = Engine.getTextureManager().loadTexture(UnnamedGame.TEX_FOLDER + "snow.png");
 		this.gTexture = Engine.getTextureManager().loadTexture(UnnamedGame.TEX_FOLDER + "flowers.png");
 		this.bTexture = Engine.getTextureManager().loadTexture(UnnamedGame.TEX_FOLDER + "path.png");
 		this.blendMap = blendMap;

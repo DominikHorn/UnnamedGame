@@ -13,16 +13,15 @@ import com.openglengine.entitity.*;
 import com.openglengine.renderer.*;
 import com.openglengine.renderer.material.*;
 import com.openglengine.renderer.model.*;
-import com.openglengine.renderer.shader.*;
 import com.openglengine.util.*;
 import com.openglengine.util.math.*;
 import com.unnamedgame.main.*;
 import com.unnamedgame.models.*;
 import com.unnamedgame.shaders.*;
 
-public class TerrainChunk implements RenderDelegate, ResourceManager {
+public class TerrainChunk implements RenderDelegate<TerrainShader>, ResourceManager {
 
-	private Model<TerrainShader> model;
+	private Model<?> model;
 	private Vector3f pos;
 
 	private float[][] heights;
@@ -31,7 +30,7 @@ public class TerrainChunk implements RenderDelegate, ResourceManager {
 	private Random random = new Random();
 
 	// TODO: refactor
-	private List<RenderableEntity> terrainDecoration;
+	private List<RenderableEntity<?>> terrainDecoration;
 
 	public TerrainChunk(TerrainShader shader, Material<TerrainShader> material, float x, float z) {
 		this.pos = new Vector3f(x, 0, z);
@@ -47,7 +46,7 @@ public class TerrainChunk implements RenderDelegate, ResourceManager {
 
 	public void update() {
 		// TODO: implement decoration frustum culling
-		for (RenderableEntity deco : this.terrainDecoration) {
+		for (RenderableEntity<?> deco : this.terrainDecoration) {
 			deco.update();
 			Engine.getRenderManager().processRenderableEntity(deco);
 		}
@@ -135,7 +134,7 @@ public class TerrainChunk implements RenderDelegate, ResourceManager {
 
 	private void generateTerrainDecoration() {
 		// Place fern using terrain height as indicator
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < 30; i++) {
 			Vector3f pos = new Vector3f();
 			Color color = null;
 			do {
@@ -144,7 +143,9 @@ public class TerrainChunk implements RenderDelegate, ResourceManager {
 				pos.y = this.getHeightAt(pos.x, pos.z);
 				color = this.getColorAt(pos.x, pos.z);
 			} while (pos.y > -5f || color.getBlue() > 0 || color.getRed() > 0);
-			this.terrainDecoration.add(EntityFactory.getEntityByName(pos, new Vector3f(2, 2, 2), "fern"));
+			RenderableEntity<?> fern = EntityFactory.getEntityByName(pos, new Vector3f(2, 2, 2), "fern");
+			fern.setTextureAtlasIndex(random.nextInt(4));
+			this.terrainDecoration.add(fern);
 		}
 
 		// Place trees
@@ -160,9 +161,22 @@ public class TerrainChunk implements RenderDelegate, ResourceManager {
 			this.terrainDecoration.add(EntityFactory.getEntityByName(pos, new Vector3f(2, 2, 2), "tree"));
 		}
 
+		// Place mushrooms
+		for (int i = 0; i < 20; i++) {
+			Vector3f pos = new Vector3f();
+			Color color = null;
+			do {
+				pos.x = random.nextFloat() * Terrain.CHUNK_SIZE + this.pos.x;
+				pos.z = random.nextFloat() * Terrain.CHUNK_SIZE + this.pos.z;
+				pos.y = this.getHeightAt(pos.x, pos.z) - 0.1f;
+				color = this.getColorAt(pos.x, pos.z);
+			} while (pos.y > 3f || color.getBlue() > 0);
+			this.terrainDecoration.add(EntityFactory.getEntityByName(pos, new Vector3f(0.6f, 0.6f, 0.6f), "mushroom"));
+		}
+
 	}
 
-	private Model<TerrainShader> generateTerrainChunkModel(String blendMapPath, String heightMapPath,
+	private Model<?> generateTerrainChunkModel(String blendMapPath, String heightMapPath,
 			TerrainShader shader, Material<TerrainShader> material) {
 		BufferedImage heightMap = null;
 		try {
@@ -277,7 +291,7 @@ public class TerrainChunk implements RenderDelegate, ResourceManager {
 	}
 
 	@Override
-	public void initRendercode(Shader shader) {
+	public void initRendercode(TerrainShader shader) {
 		// Set model transform
 		TransformationMatrixStack tms = Engine.getModelMatrixStack();
 		tms.push();

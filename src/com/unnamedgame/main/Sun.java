@@ -20,7 +20,7 @@ public class Sun extends MovingLightSource {
 			if (timeSin < 0)
 				timeSin = -timeSin;
 			// Daytime position (emulate sun)
-			source.position.y = timeSin * Terrain.MAX_HEIGHT;
+			source.position.y = timeSin * Terrain.MAX_HEIGHT * 2;
 			source.position.x = (float) Math.cos(timeOfDay) * Terrain.CHUNK_SIZE * Terrain.TERRAIN_WIDTH / 2;
 
 			// Change light source.brightness and depending on time of day

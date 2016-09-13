@@ -2,7 +2,6 @@ package com.unnamedgame.terrain;
 
 import java.util.*;
 
-import com.openglengine.renderer.material.*;
 import com.openglengine.util.*;
 import com.unnamedgame.main.*;
 import com.unnamedgame.materials.*;
@@ -17,9 +16,8 @@ public class Terrain implements ResourceManager {
 	protected static final float MIN_HEIGHT = -MAX_HEIGHT;
 	protected static final float MAX_PIXEL_COLOR = 256 * 256 * 256;
 
-	// TODO: refactor
 	private TerrainShader terrainShader;
-	private Material<TerrainShader> terrainMaterial;
+	private TerrainMaterial terrainChunkMaterial;
 
 	private TerrainChunk[][] terrainChunks;
 
@@ -29,7 +27,7 @@ public class Terrain implements ResourceManager {
 		this.terrainShader = new TerrainShader();
 		this.terrainShader.compileShaderFromFiles(UnnamedGame.SHADER_FOLDER + "terrain_vertex.glsl",
 				UnnamedGame.SHADER_FOLDER + "terrain_fragment.glsl");
-		this.terrainMaterial = new TerrainMaterial();
+		this.terrainChunkMaterial = new TerrainMaterial();
 
 		this.terrainChunks = new TerrainChunk[TERRAIN_WIDTH][TERRAIN_DEPTH];
 		this.visibleChunks = new ArrayList<>();
@@ -39,7 +37,6 @@ public class Terrain implements ResourceManager {
 
 	public void update() {
 		this.getVisibleChunks().forEach(c -> c.update());
-
 	}
 
 	private List<TerrainChunk> getVisibleChunks() {
@@ -56,7 +53,7 @@ public class Terrain implements ResourceManager {
 	private void generateTerrain() {
 		for (int x = 0; x < TERRAIN_WIDTH; x++)
 			for (int z = 0; z < TERRAIN_DEPTH; z++) {
-				this.terrainChunks[x][z] = new TerrainChunk(this.terrainShader, this.terrainMaterial,
+				this.terrainChunks[x][z] = new TerrainChunk(this.terrainShader, this.terrainChunkMaterial,
 						(x - getTerrainOffsetX()) * CHUNK_SIZE, (z - getTerrainOffsetZ()) * CHUNK_SIZE);
 			}
 	}

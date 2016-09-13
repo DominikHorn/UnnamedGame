@@ -6,6 +6,7 @@ import com.unnamedgame.shaders.*;
 public class TerrainMaterial extends Material<TerrainShader> {
 	@Override
 	public void initRendercode(TerrainShader shader) {
+		// Do nothing for now
 	}
 
 	@Override

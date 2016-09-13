@@ -20,13 +20,13 @@ public class PlayerPhysicsComponent implements RenderableEntityComponent {
 	private boolean canJump = false;
 
 	@Override
-	public void init(RenderableEntity entity) {
+	public void init(RenderableEntity<?> entity) {
 		this.speed = new Vector3f();
 		this.rotationSpeed = new Vector3f();
 	}
 
 	@Override
-	public void update(RenderableEntity entity) {
+	public void update(RenderableEntity<?> entity) {
 		// Fetch input
 		this.fetchInput(entity);
 
@@ -37,7 +37,7 @@ public class PlayerPhysicsComponent implements RenderableEntityComponent {
 		this.move(entity);
 	}
 
-	private void fetchInput(RenderableEntity entity) {
+	private void fetchInput(RenderableEntity<?> entity) {
 		InputManager input = Engine.getInputManager();
 
 		// Reset old movement
@@ -83,7 +83,7 @@ public class PlayerPhysicsComponent implements RenderableEntityComponent {
 		}
 	}
 
-	private void rotate(RenderableEntity entity) {
+	private void rotate(RenderableEntity<?> entity) {
 		entity.rotation.addVector(this.rotationSpeed);
 	}
 
@@ -93,7 +93,7 @@ public class PlayerPhysicsComponent implements RenderableEntityComponent {
 	 * @param entity
 	 * @return
 	 */
-	private void move(RenderableEntity entity) {
+	private void move(RenderableEntity<?> entity) {
 		// Add speed vectors
 		entity.position.addVector(this.speed);
 

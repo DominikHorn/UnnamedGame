@@ -16,6 +16,10 @@ uniform mat4 viewMatrix;
 uniform vec3 lightPosition;
 uniform float useFakeLighting;
 
+// Texture stuff
+uniform vec2 texOffset;
+uniform int texAtlasRowCount;
+
 const float density = 0.001;
 const float gradient = 1.5;
 
@@ -24,7 +28,7 @@ void main(void) {
 	vec4 positionRelativeToCam = viewMatrix * worldPosition;
 
 	gl_Position = projectionMatrix * positionRelativeToCam;
-	pass_textureCoords = textureCoords;
+	pass_textureCoords = textureCoords / texAtlasRowCount + texOffset;
 	
 	vec3 actualNormal = normal;
 	if (useFakeLighting > 0.5) {
