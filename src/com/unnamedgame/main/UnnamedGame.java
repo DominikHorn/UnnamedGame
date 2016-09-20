@@ -52,7 +52,7 @@ public class UnnamedGame extends Basic3DGame {
 		SKY_COLOR = new Vector3f(1f, 1f, 1f);
 
 //		 Setup sun
-		SUN = new Sun(0.002);
+		SUN = new Sun(0.005);
 
 		// Load models
 		EntityFactory.load();
@@ -68,7 +68,9 @@ public class UnnamedGame extends Basic3DGame {
 	}
 
 	@Override
-	protected void update() {
+	protected void update(double deltatime) {
+		// TODO: use delta time
+
 		// TODO: tmp debug stuff
 		if (Engine.getInputManager().wasKeyPressed(InputManager.KEY_F1)) {
 			this.wireframe = !this.wireframe;
