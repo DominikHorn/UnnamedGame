@@ -6,6 +6,7 @@ import org.lwjgl.opengl.*;
 
 import com.openglengine.core.*;
 import com.openglengine.entitity.*;
+import com.openglengine.renderer.gui.*;
 import com.openglengine.util.*;
 import com.openglengine.util.Logger.*;
 import com.openglengine.util.math.*;
@@ -65,6 +66,11 @@ public class UnnamedGame extends Basic3DGame {
 
 		// Create player entity
 		this.player = EntityFactory.getPlayerEntity(new Vector3f(0, 0, 0), new Vector3f(1f, 1f, 1f));
+
+		// Setup gui
+		Engine.getGuiManager().addGuiElement(
+				new GuiElement(Engine.getTextureManager().loadTexture(TEX_FOLDER + "tmp.png"), new Vector2f(0.5f, 0.5f),
+						new Vector2f(0.25f, 0.25f)));
 	}
 
 	@Override

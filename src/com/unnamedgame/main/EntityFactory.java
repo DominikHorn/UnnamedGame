@@ -26,8 +26,6 @@ public class EntityFactory {
 		GL11.glClearColor(UnnamedGame.SKY_COLOR.x, UnnamedGame.SKY_COLOR.y, UnnamedGame.SKY_COLOR.z, 1.0f);
 
 		standardShader = new DynamicShader();
-		standardShader.compileShaderFromFiles(UnnamedGame.SHADER_FOLDER + "standard_vertex.glsl",
-				UnnamedGame.SHADER_FOLDER + "standard_fragment.glsl");
 
 		ModelData fernModelData = Engine.getModelDataManager().loadModelData(UnnamedGame.MODEL_FOLDER + "fern.obj");
 		TexturedModel<?> fernModel = new TexturedModel<>(UnnamedGame.TEX_FOLDER + "fern.png", 2, standardShader,

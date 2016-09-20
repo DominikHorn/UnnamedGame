@@ -40,6 +40,11 @@ public class TerrainShader extends Shader {
 	/** uniform location of sky color */
 	public int location_blendMap;
 
+	public TerrainShader() {
+		this.compileShaderFromFiles(UnnamedGame.SHADER_FOLDER + "terrain_vertex.glsl",
+				UnnamedGame.SHADER_FOLDER + "terrain_fragment.glsl");
+	}
+
 	@Override
 	protected void getAllUniformLocations() {
 		super.getAllUniformLocations();

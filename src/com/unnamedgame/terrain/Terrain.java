@@ -3,7 +3,6 @@ package com.unnamedgame.terrain;
 import java.util.*;
 
 import com.openglengine.util.*;
-import com.unnamedgame.main.*;
 import com.unnamedgame.materials.*;
 import com.unnamedgame.shaders.*;
 
@@ -25,8 +24,6 @@ public class Terrain implements ResourceManager {
 
 	public Terrain() {
 		this.terrainShader = new TerrainShader();
-		this.terrainShader.compileShaderFromFiles(UnnamedGame.SHADER_FOLDER + "terrain_vertex.glsl",
-				UnnamedGame.SHADER_FOLDER + "terrain_fragment.glsl");
 		this.terrainChunkMaterial = new TerrainMaterial();
 
 		this.terrainChunks = new TerrainChunk[TERRAIN_WIDTH][TERRAIN_DEPTH];

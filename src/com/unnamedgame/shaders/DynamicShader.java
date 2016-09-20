@@ -31,6 +31,11 @@ public class DynamicShader extends Shader {
 	/** uniform location of sky color */
 	public int location_skyColor;
 
+	public DynamicShader() {
+		this.compileShaderFromFiles(UnnamedGame.SHADER_FOLDER + "standard_vertex.glsl",
+				UnnamedGame.SHADER_FOLDER + "standard_fragment.glsl");
+	}
+
 	@Override
 	protected void getAllUniformLocations() {
 		super.getAllUniformLocations();
