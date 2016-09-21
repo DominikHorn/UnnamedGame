@@ -9,41 +9,72 @@ in float visibility;
 out vec4 out_color;
 
 uniform sampler2D textureSampler;
-uniform vec3 lightColors[4];
 uniform vec3 skyColor;
+uniform vec3 lightColors[4];
+uniform float lightBrightness[4];
 uniform float shineDamper;
 uniform float reflectivity;
 uniform float transparent;
 
-void main(void) {
-	vec3 unitNormal = normalize(surfaceNormal);
-	vec3 unitVectorToCamera = normalize(toCameraVector);
+/**
+ * Calculates diffuse light component for light source
+ */
+vec3 calculateDiffuse(vec3 unitSurfaceNormal, vec3 toLightVector, vec3 lightColor) {
+	float nDotl = dot(unitSurfaceNormal, normalize(toLightVector));
+	float angularBrightness = max(nDotl, 0.0);
 
-	vec3 totalDiffuse = vec3(0.0);
-	vec3 totalSpecular = vec3(0.0);
+	return angularBrightness * lightColor;
+}
 
-	for (int i = 0; i < 4; i++) {
-		vec3 unitLightVector = normalize(toLightVectors[i]);
-		float nDotl = dot(unitNormal, unitLightVector);
-		float brightness = max(nDotl, 0.0);
-		vec3 lightDirection = -unitLightVector;
-		vec3 reflectedLightDirection = reflect(lightDirection, unitNormal);
-		float specularFactor = dot(reflectedLightDirection, unitVectorToCamera);
-		specularFactor = max(specularFactor, 0.0);
-		float dampedFactor = pow(specularFactor, shineDamper);
+/**
+ * Calculates specular light component for light source
+ */
+vec3 calculateSpecular(vec3 unitSurfaceNormal, vec3 unitVectorToCamera, vec3 toLightVector, vec3 lightColor) {
+	vec3 lightDirection = -normalize(toLightVector);
+	vec3 reflectedLightDirection = reflect(lightDirection, unitSurfaceNormal);
+	float specularFactor = dot(reflectedLightDirection, unitVectorToCamera);
+	specularFactor = max(specularFactor, 0.0);
+	float dampedFactor = pow(specularFactor, shineDamper);
 
-		totalDiffuse = totalDiffuse + brightness * lightColors[i];
-		totalSpecular = totalSpecular + dampedFactor * reflectivity *  lightColors[i];
-	}
-	totalDiffuse = max(totalDiffuse, 0.05);
+	return dampedFactor * reflectivity *  lightColor;
+}
 
-	vec4 texColor = texture(textureSampler, pass_textureCoords);
-	if (transparent == 1 && texColor.a < 0.5) {
+/**
+ * Calculates light attenuation (decay of brightness over distance)
+ */
+float calculateLightAttenuation(float lightBrightness, vec3 toLightVector) {
+	float k = 1 / lightBrightness;
+	return 1 / (1 + k * length(toLightVector));
+}
+
+/**
+ * Calculates color, taking both diffuse and specular lighting into consideration
+ */
+vec4 calculateColor() {
+	// Texture color calculation
+	vec4 blendColor = texture(textureSampler, pass_textureCoords);
+	if (transparent == 1 && blendColor.a < 0.5) {
 		discard;
 	}
-	
-	out_color = vec4(totalDiffuse + 0.1, 1.0) * texColor + vec4(totalSpecular, 1.0);
 
-	// Enable this line for fog calculation
-	out_color = mix(vec4(skyColor, 1.0), out_color, visibility);
+	// normalize surface normal vector
+	vec3 unitSurfaceNormal = normalize(surfaceNormal);
+	vec3 unitVectorToCamera = normalize(toCameraVector);
+
+	// Calculate specular and diffuse
+	vec3 totalDiffuse = vec3(0.0);
+	vec3 totalSpecular = vec3(0.0);
+	for (int i = 0; i < 4; i++) {
+		float attenuation = calculateLightAttenuation(lightBrightness[i], toLightVectors[i]);
+		totalDiffuse = totalDiffuse + attenuation * calculateDiffuse(unitSurfaceNormal, toLightVectors[i], lightColors[i]);
+		totalSpecular = totalSpecular + attenuation * calculateSpecular(unitSurfaceNormal, unitVectorToCamera, toLightVectors[i], lightColors[i]);
+	}
+	totalDiffuse = max(totalDiffuse, 0.0);
+
+	return vec4(totalDiffuse, 1.0) * blendColor + vec4(totalSpecular, 1.0);
+}
+
+void main(void) {
+	// Fog computation with color from calculateColor()
+	out_color = mix(vec4(skyColor, 1.0), calculateColor(), visibility);
 }

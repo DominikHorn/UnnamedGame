@@ -36,12 +36,10 @@ public class TerrainChunk implements RenderDelegate<TerrainShader>, ResourceMana
 		this.pos = new Vector3f(x, 0, z);
 		this.terrainDecoration = new ArrayList<>();
 
-		Engine.getLogger().info("Generating terrain.");
+		Engine.getLogger().info("Generating terrain Chunk...");
 		this.model = this.generateTerrainChunkModel(UnnamedGame.TERRAIN_FOLDER + "blendmap.png",
 				UnnamedGame.TERRAIN_FOLDER + "heightmap.png", shader, material);
-		Engine.getLogger().info("Adding decoration.");
 		this.generateTerrainDecoration();
-		Engine.getLogger().info("Done!");
 	}
 
 	public void update() {
@@ -249,7 +247,8 @@ public class TerrainChunk implements RenderDelegate<TerrainShader>, ResourceMana
 	}
 
 	private void calculateNormals(float[] normals, float[] vertices, int[] indices) {
-		Engine.getLogger().info("Terrain mesh has " + normals.length + " normals, " + vertices.length + " vertices and "
+		Engine.getLogger().info("new terrain mesh has " + normals.length + " normals, " + vertices.length
+				+ " vertices and "
 				+ indices.length + " indices.");
 
 		for (int i = 0; i < indices.length - 3; i += 3) {

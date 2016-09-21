@@ -12,6 +12,9 @@ public class TerrainShader extends Shader {
 	/** uniform location of the lights color shader attrib */
 	public int[] location_lightColors;
 
+	/** uniform location of lights brightness shader attrib */
+	public int[] location_lightBrightness;
+
 	/** uniform location of the shine dampener shader attrib */
 	public int location_shineDamper;
 
@@ -57,10 +60,12 @@ public class TerrainShader extends Shader {
 		// Get array uniforms
 		this.location_lightPositions = new int[UnnamedGame.MAX_LIGHTS];
 		this.location_lightColors = new int[UnnamedGame.MAX_LIGHTS];
+		this.location_lightBrightness = new int[UnnamedGame.MAX_LIGHTS];
 
 		for (int i = 0; i < UnnamedGame.MAX_LIGHTS; i++) {
 			this.location_lightPositions[i] = super.getUniformLocation("lightPositions[" + i + "]");
 			this.location_lightColors[i] = super.getUniformLocation("lightColors[" + i + "]");
+			this.location_lightBrightness[i] = super.getUniformLocation("lightBrightness[" + i + "]");
 		}
 	}
 
@@ -80,9 +85,11 @@ public class TerrainShader extends Shader {
 			if (i < UnnamedGame.LIGHTS.size()) {
 				super.loadVector3f(this.location_lightPositions[i], UnnamedGame.LIGHTS.get(i).position);
 				super.loadVector3f(this.location_lightColors[i], UnnamedGame.LIGHTS.get(i).color);
+				super.loadFloat(this.location_lightBrightness[i], UnnamedGame.LIGHTS.get(i).brightness);
 			} else {
 				super.loadVector3f(this.location_lightPositions[i], new Vector3f());
 				super.loadVector3f(this.location_lightColors[i], new Vector3f());
+				super.loadFloat(this.location_lightBrightness[i], 0f);
 			}
 		}
 	}

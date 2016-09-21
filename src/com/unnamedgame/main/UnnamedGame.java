@@ -7,7 +7,6 @@ import org.lwjgl.opengl.*;
 
 import com.openglengine.core.*;
 import com.openglengine.entitity.*;
-import com.openglengine.renderer.gui.*;
 import com.openglengine.util.*;
 import com.openglengine.util.Logger.*;
 import com.openglengine.util.math.*;
@@ -58,10 +57,7 @@ public class UnnamedGame extends Basic3DGame {
 
 		// Add lights
 		LIGHTS = new ArrayList<>();
-		LIGHTS.add(new DiscoLightSource(new Vector3f(0, 300, 0), new Vector3f(1, 1, 1), 3f));
-		// LIGHTS.add(new DiscoLightSource(new Vector3f(100, 010, 100), new Vector3f(1, 0, 0), 3f));
-		// LIGHTS.add(new DiscoLightSource(new Vector3f(-100, 010, 100), new Vector3f(0, 1, 0), 3f));
-		// LIGHTS.add(new DiscoLightSource(new Vector3f(100, 010, -100), new Vector3f(0, 0, 1), 3f));
+		LIGHTS.add(new DiscoLightSource(new Vector3f(000, 100, 0), new Vector3f(1, 1, 1), 10000f, 0));
 
 		// Load models
 		EntityFactory.load();
@@ -76,9 +72,9 @@ public class UnnamedGame extends Basic3DGame {
 		this.player = EntityFactory.getPlayerEntity(new Vector3f(0, 0, 0), new Vector3f(1f, 1f, 1f));
 
 		// Setup gui
-		Engine.getGuiManager().addGuiElement(
-				new GuiElement(Engine.getTextureManager().loadTexture(TEX_FOLDER + "tmp.png"), new Vector2f(0.5f, 0.5f),
-						new Vector2f(0.25f, 0.25f)));
+		// Engine.getGuiManager().addGuiElement(
+		// new GuiElement(Engine.getTextureManager().loadTexture(TEX_FOLDER + "tmp.png"), new Vector2f(0.5f, 0.5f),
+		// new Vector2f(0.25f, 0.25f)));
 	}
 
 	@Override
