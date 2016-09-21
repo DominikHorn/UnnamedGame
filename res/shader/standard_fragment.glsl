@@ -11,7 +11,7 @@ out vec4 out_color;
 uniform sampler2D textureSampler;
 uniform vec3 skyColor;
 uniform vec3 lightColors[4];
-uniform float lightBrightness[4];
+uniform vec3 lightAttenuations[4];
 uniform float shineDamper;
 uniform float reflectivity;
 uniform float transparent;
@@ -42,9 +42,9 @@ vec3 calculateSpecular(vec3 unitSurfaceNormal, vec3 unitVectorToCamera, vec3 toL
 /**
  * Calculates light attenuation (decay of brightness over distance)
  */
-float calculateLightAttenuation(float lightBrightness, vec3 toLightVector) {
-	float k = 1 / lightBrightness;
-	return 1 / (1 + k * length(toLightVector));
+float calculateLightAttenuation(vec3 attenuation, vec3 toLightVector) {
+	float distance = length(toLightVector);
+	return attenuation.x + (attenuation.y * distance) + (attenuation.z * distance * distance);
 }
 
 /**
@@ -65,11 +65,11 @@ vec4 calculateColor() {
 	vec3 totalDiffuse = vec3(0.0);
 	vec3 totalSpecular = vec3(0.0);
 	for (int i = 0; i < 4; i++) {
-		float attenuation = calculateLightAttenuation(lightBrightness[i], toLightVectors[i]);
-		totalDiffuse = totalDiffuse + attenuation * calculateDiffuse(unitSurfaceNormal, toLightVectors[i], lightColors[i]);
-		totalSpecular = totalSpecular + attenuation * calculateSpecular(unitSurfaceNormal, unitVectorToCamera, toLightVectors[i], lightColors[i]);
+		float attFac = calculateLightAttenuation(lightAttenuations[i], toLightVectors[i]);
+		totalDiffuse = totalDiffuse + (calculateDiffuse(unitSurfaceNormal, toLightVectors[i], lightColors[i]) / attFac);
+		totalSpecular = totalSpecular + (calculateSpecular(unitSurfaceNormal, unitVectorToCamera, toLightVectors[i], lightColors[i]) / attFac);
 	}
-	totalDiffuse = max(totalDiffuse, 0.0);
+	totalDiffuse = max(totalDiffuse, 0.05);
 
 	return vec4(totalDiffuse, 1.0) * blendColor + vec4(totalSpecular, 1.0);
 }

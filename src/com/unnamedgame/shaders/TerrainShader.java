@@ -6,20 +6,17 @@ import com.unnamedgame.main.*;
 
 public class TerrainShader extends Shader {
 
-	/** uniform location of the lights position shader attrib */
+	/** uniform location of lights stuff */
 	public int[] location_lightPositions;
-
-	/** uniform location of the lights color shader attrib */
 	public int[] location_lightColors;
+	public int[] location_lightAttenuations;
 
-	/** uniform location of lights brightness shader attrib */
-	public int[] location_lightBrightness;
-
-	/** uniform location of the shine dampener shader attrib */
-	public int location_shineDamper;
-
-	/** uniform location of the reflectivity shader attrib */
-	public int location_reflectivity;
+	/** uniform locations spotlight stuff */
+	public int location_spotLightPosition;
+	public int location_spotLightAttenuation;
+	public int location_spotLightDirection;
+	public int location_spotLightColor;
+	public int location_spotCosCutoff;
 
 	/** uniform location of sky color */
 	public int location_skyColor;
@@ -48,24 +45,27 @@ public class TerrainShader extends Shader {
 	protected void getAllUniformLocations() {
 		super.getAllUniformLocations();
 
-		this.location_shineDamper = super.getUniformLocation("shineDamper");
-		this.location_reflectivity = super.getUniformLocation("reflectivity");
 		this.location_skyColor = super.getUniformLocation("skyColor");
 		this.location_backgroundTexture = super.getUniformLocation("backgroundTexture");
 		this.location_rTexture = super.getUniformLocation("rTexture");
 		this.location_gTexture = super.getUniformLocation("gTexture");
 		this.location_bTexture = super.getUniformLocation("bTexture");
 		this.location_blendMap = super.getUniformLocation("blendMap");
+		this.location_spotLightPosition = super.getUniformLocation("spotLightPosition");
+		this.location_spotLightAttenuation = super.getUniformLocation("spotLightAttenuation");
+		this.location_spotLightDirection = super.getUniformLocation("spotLightDirection");
+		this.location_spotLightColor = super.getUniformLocation("spotLightColor");
+		this.location_spotCosCutoff = super.getUniformLocation("spotCosCutoff");
 
 		// Get array uniforms
 		this.location_lightPositions = new int[UnnamedGame.MAX_LIGHTS];
 		this.location_lightColors = new int[UnnamedGame.MAX_LIGHTS];
-		this.location_lightBrightness = new int[UnnamedGame.MAX_LIGHTS];
+		this.location_lightAttenuations = new int[UnnamedGame.MAX_LIGHTS];
 
 		for (int i = 0; i < UnnamedGame.MAX_LIGHTS; i++) {
 			this.location_lightPositions[i] = super.getUniformLocation("lightPositions[" + i + "]");
 			this.location_lightColors[i] = super.getUniformLocation("lightColors[" + i + "]");
-			this.location_lightBrightness[i] = super.getUniformLocation("lightBrightness[" + i + "]");
+			this.location_lightAttenuations[i] = super.getUniformLocation("lightAttenuations[" + i + "]");
 		}
 	}
 
@@ -80,16 +80,22 @@ public class TerrainShader extends Shader {
 		super.loadInt(location_bTexture, 3);
 		super.loadInt(location_blendMap, 4);
 
+		super.loadVector3f(this.location_spotLightPosition, UnnamedGame.SPOTLIGHT.position);
+		super.loadVector3f(this.location_spotLightDirection, UnnamedGame.SPOTLIGHT.direction);
+		super.loadVector3f(this.location_spotLightColor, UnnamedGame.SPOTLIGHT.color);
+		super.loadVector3f(this.location_spotLightAttenuation, UnnamedGame.SPOTLIGHT.attenuation);
+		super.loadFloat(this.location_spotCosCutoff, UnnamedGame.SPOTLIGHT.cutoffAngle);
+
 		// TODO: refactor light stuff
 		for (int i = 0; i < UnnamedGame.MAX_LIGHTS; i++) {
-			if (i < UnnamedGame.LIGHTS.size()) {
-				super.loadVector3f(this.location_lightPositions[i], UnnamedGame.LIGHTS.get(i).position);
-				super.loadVector3f(this.location_lightColors[i], UnnamedGame.LIGHTS.get(i).color);
-				super.loadFloat(this.location_lightBrightness[i], UnnamedGame.LIGHTS.get(i).brightness);
+			if (i < UnnamedGame.POINT_LIGHTS.size()) {
+				super.loadVector3f(this.location_lightPositions[i], UnnamedGame.POINT_LIGHTS.get(i).position);
+				super.loadVector3f(this.location_lightColors[i], UnnamedGame.POINT_LIGHTS.get(i).color);
+				super.loadVector3f(this.location_lightAttenuations[i], UnnamedGame.POINT_LIGHTS.get(i).attenuation);
 			} else {
 				super.loadVector3f(this.location_lightPositions[i], new Vector3f());
 				super.loadVector3f(this.location_lightColors[i], new Vector3f());
-				super.loadFloat(this.location_lightBrightness[i], 0f);
+				super.loadVector3f(this.location_lightAttenuations[i], new Vector3f(1, 0, 0));
 			}
 		}
 	}

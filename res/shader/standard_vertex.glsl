@@ -20,7 +20,7 @@ uniform float useFakeLighting;
 uniform vec2 texOffset;
 uniform int texAtlasRowCount;
 
-const float density = 0.001;
+const float density = 0.005;
 const float gradient = 1.5;
 
 void main(void) {

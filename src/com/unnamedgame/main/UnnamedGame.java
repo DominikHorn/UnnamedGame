@@ -7,8 +7,8 @@ import org.lwjgl.opengl.*;
 
 import com.openglengine.core.*;
 import com.openglengine.entitity.*;
-import com.openglengine.util.*;
 import com.openglengine.util.Logger.*;
+import com.openglengine.util.light.*;
 import com.openglengine.util.math.*;
 import com.unnamedgame.terrain.*;
 
@@ -37,7 +37,8 @@ public class UnnamedGame extends Basic3DGame {
 	/** maximum lights for this shader */
 	public static final int MAX_LIGHTS = 4;
 
-	public static List<LightSource> LIGHTS;
+	public static List<LightSource> POINT_LIGHTS;
+	public static SpotLightSource SPOTLIGHT;
 	public static Vector3f SKY_COLOR;
 	public static Terrain TERRAIN;
 
@@ -54,17 +55,25 @@ public class UnnamedGame extends Basic3DGame {
 	protected void setup() {
 		// Must be setup before entity factory
 		SKY_COLOR = new Vector3f(0f, 0f, 0f);
-
-		// Add lights
-		LIGHTS = new ArrayList<>();
-		LIGHTS.add(new DiscoLightSource(new Vector3f(000, 100, 0), new Vector3f(1, 1, 1), 10000f, 0));
+		POINT_LIGHTS = new ArrayList<>();
 
 		// Load models
 		EntityFactory.load();
 
 		// Setup globals
 		TERRAIN = new Terrain();
-
+		// POINT_LIGHTS.add(
+		// new LightSource(new Vector3f(100, 20, 0), new Vector3f(1, 1, 1), new Vector3f(1f, 0.1f, 0.002f)));
+		// POINT_LIGHTS.add(
+		// new LightSource(new Vector3f(-100, 20, 0), new Vector3f(1, 1, 1), new Vector3f(0.5f, 0.01f, 0.0002f)));
+		// POINT_LIGHTS.add(
+		// new LightSource(new Vector3f(0, 20, 100), new Vector3f(1, 1, 1), new Vector3f(0.5f, 0.01f, 0.0002f)));
+		// POINT_LIGHTS.add(
+		// new LightSource(new Vector3f(0, 20, -100), new Vector3f(1, 1, 1), new Vector3f(0.5f, 0.01f, 0.0002f)));
+		SPOTLIGHT = new SpotLightSource(new Vector3f(0, 5f, 0), new Vector3f(1, 0.9f, 0.7f),
+				new Vector3f(1f, 0.01f, 0.0002f), new Vector3f(0f, -1f, 0f),
+				(float) Math.cos(Math.toRadians(180)));
+		
 		// Don't grab the mouse (until we have a fps camera)
 		Engine.getInputManager().setMouseGrabbed(false);
 

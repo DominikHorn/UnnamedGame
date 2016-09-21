@@ -2,6 +2,7 @@
 
 in vec3 surfaceNormal;
 in vec3 toLightVectors[4];
+in vec3 toSpotLightVector;
 in vec3 toCameraVector;
 in vec2 pass_textureCoords;
 in float visibility;
@@ -16,9 +17,11 @@ uniform sampler2D blendMap;
 
 uniform vec3 skyColor;
 uniform vec3 lightColors[4];
-uniform float lightBrightness[4];
-uniform float shineDamper = 1;
-uniform float reflectivity = 0;
+uniform vec3 lightAttenuations[4];
+uniform vec3 spotLightAttenuation;
+uniform vec3 spotLightDirection;
+uniform vec3 spotLightColor;
+uniform float spotCosCutoff;
 
 /**
  * Calculates color from the blendmap and corresponding textures
@@ -48,9 +51,24 @@ vec3 calculateDiffuse(vec3 unitSurfaceNormal, vec3 toLightVector, vec3 lightColo
 /**
  * Calculates light attenuation (decay of brightness over distance)
  */
-float calculateLightAttenuation(float lightBrightness, vec3 toLightVector) {
-	float k = 1 / lightBrightness;
-	return 1 / (1 + k * length(toLightVector));
+float calculateLightAttenuation(vec3 attenuation, vec3 toLightVector) {
+	float distance = length(toLightVector);
+	return (attenuation.x) + (attenuation.y * distance) + (attenuation.z * distance * distance);
+}
+
+/**
+ * Calculates spotlight values
+ */
+float calculateSpotlightEffect(float ndotl) {
+	float spoteffect = 0;
+	if (ndotl > 0.0) {
+		spoteffect = dot(spotLightDirection, normalize(-toSpotLightVector));
+		if (spoteffect > spotCosCutoff) {
+			spoteffect = pow(spoteffect, 2);
+		}
+	}
+
+	return spoteffect;
 }
 
 /**
@@ -66,12 +84,16 @@ vec4 calculateColor() {
 
 	// Calculate specular and diffuse
 	vec3 totalDiffuse = vec3(0.0);
-	//vec3 totalSpecular = vec3(0.0);
 	for (int i = 0; i < 4; i++) {
-		float attenuation = calculateLightAttenuation(lightBrightness[i], toLightVectors[i]);
-		totalDiffuse = totalDiffuse + attenuation * calculateDiffuse(unitSurfaceNormal, toLightVectors[i], lightColors[i]);
+		float attFac = calculateLightAttenuation(lightAttenuations[i], toLightVectors[i]);
+		totalDiffuse = totalDiffuse + (calculateDiffuse(unitSurfaceNormal, toLightVectors[i], lightColors[i]) / attFac);
 	}
-	totalDiffuse = max(totalDiffuse, 0.0);
+	totalDiffuse = max(totalDiffuse, 0.05);
+
+	// Handle spotlight
+	float ndotl = max(dot(spotLightDirection, -toSpotLightVector), 0.0);
+	float spotlighteffect = calculateSpotlightEffect(ndotl) / calculateLightAttenuation(spotLightAttenuation, toSpotLightVector);
+	totalDiffuse = totalDiffuse + spotlighteffect * spotLightColor;
 
 	return vec4(totalDiffuse, 1.0) * blendColor;
 }
