@@ -1,6 +1,7 @@
 package com.unnamedgame.main;
 
 import java.io.*;
+import java.util.*;
 
 import org.lwjgl.opengl.*;
 
@@ -34,7 +35,10 @@ public class UnnamedGame extends Basic3DGame {
 	public static String SHADER_FOLDER = RES_FOLDER + "shader/";
 	public static String TERRAIN_FOLDER = RES_FOLDER + "terrain/";
 
-	public static LightSource SUN;
+	/** maximum lights for this shader */
+	public static final int MAX_LIGHTS = 4;
+
+	public static List<LightSource> LIGHTS;
 	public static Vector3f SKY_COLOR;
 	public static Terrain TERRAIN;
 
@@ -50,10 +54,14 @@ public class UnnamedGame extends Basic3DGame {
 	@Override
 	protected void setup() {
 		// Must be setup before entity factory
-		SKY_COLOR = new Vector3f(1f, 1f, 1f);
+		SKY_COLOR = new Vector3f(0f, 0f, 0f);
 
-//		 Setup sun
-		SUN = new Sun(0.005);
+		// Add lights
+		LIGHTS = new ArrayList<>();
+		LIGHTS.add(new DiscoLightSource(new Vector3f(0, 300, 0), new Vector3f(1, 1, 1), 3f));
+		// LIGHTS.add(new DiscoLightSource(new Vector3f(100, 010, 100), new Vector3f(1, 0, 0), 3f));
+		// LIGHTS.add(new DiscoLightSource(new Vector3f(-100, 010, 100), new Vector3f(0, 1, 0), 3f));
+		// LIGHTS.add(new DiscoLightSource(new Vector3f(100, 010, -100), new Vector3f(0, 0, 1), 3f));
 
 		// Load models
 		EntityFactory.load();

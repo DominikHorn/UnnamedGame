@@ -1,26 +1,21 @@
 package com.unnamedgame.shaders;
 
 import com.openglengine.renderer.shader.*;
+import com.openglengine.util.math.*;
 import com.unnamedgame.main.*;
 
 public class DynamicShader extends Shader {
 	/** uniform location of the lights position shader attrib */
-	public int location_lightPosition;
+	public int[] location_lightPositions;
 
 	/** uniform location of the lights color shader attrib */
-	public int location_lightColor;
+	public int[] location_lightColors;
 
 	/** uniform location of the shine dampener shader attrib */
 	public int location_shineDamper;
 
 	/** uniform location of the reflectivity shader attrib */
 	public int location_reflectivity;
-
-	/** uniform location of ambient brightness attrib */
-	public int location_ambientBrightness;
-
-	/** uniform location of light source brightness */
-	public int location_lightBrightness;
 
 	/** uniform location of light source brightness */
 	public int location_transparent;
@@ -40,26 +35,36 @@ public class DynamicShader extends Shader {
 	protected void getAllUniformLocations() {
 		super.getAllUniformLocations();
 
-		this.location_lightPosition = super.getUniformLocation("lightPosition");
-		this.location_lightColor = super.getUniformLocation("lightColor");
 		this.location_shineDamper = super.getUniformLocation("shineDamper");
 		this.location_reflectivity = super.getUniformLocation("reflectivity");
-		this.location_ambientBrightness = super.getUniformLocation("ambientBrightness");
-		this.location_lightBrightness = super.getUniformLocation("lightBrightness");
 		this.location_transparent = super.getUniformLocation("transparent");
 		this.location_useFakeLighting = super.getUniformLocation("useFakeLighting");
 		this.location_skyColor = super.getUniformLocation("skyColor");
+
+		// Get array uniforms
+		this.location_lightPositions = new int[UnnamedGame.MAX_LIGHTS];
+		this.location_lightColors = new int[UnnamedGame.MAX_LIGHTS];
+
+		for (int i = 0; i < UnnamedGame.MAX_LIGHTS; i++) {
+			this.location_lightPositions[i] = super.getUniformLocation("lightPositions[" + i + "]");
+			this.location_lightColors[i] = super.getUniformLocation("lightColors[" + i + "]");
+		}
 	}
 
 	@Override
 	public void uploadGlobalUniforms() {
 		// TODO: refactor sky color
-		super.loadVector3f(location_skyColor, UnnamedGame.SUN.color);
+		super.loadVector3f(location_skyColor, UnnamedGame.SKY_COLOR);
 
 		// TODO: refactor light stuff
-		super.loadVector3f(location_lightPosition, UnnamedGame.SUN.position);
-		super.loadVector3f(location_lightColor, UnnamedGame.SUN.color);
-		super.loadFloat(location_lightBrightness, UnnamedGame.SUN.brightness);
-		super.loadFloat(location_ambientBrightness, 0.0f); // TODO: refactor
+		for (int i = 0; i < UnnamedGame.MAX_LIGHTS; i++) {
+			if (i < UnnamedGame.LIGHTS.size()) {
+				super.loadVector3f(this.location_lightPositions[i], UnnamedGame.LIGHTS.get(i).position);
+				super.loadVector3f(this.location_lightColors[i], UnnamedGame.LIGHTS.get(i).color);
+			} else {
+				super.loadVector3f(this.location_lightPositions[i], new Vector3f());
+				super.loadVector3f(this.location_lightColors[i], new Vector3f());
+			}
+		}
 	}
 }
