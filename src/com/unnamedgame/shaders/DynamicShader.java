@@ -14,6 +14,13 @@ public class DynamicShader extends Shader {
 	private int[] location_lightColors;
 	private int[] location_lightAttenuation;
 
+	/** uniform locations spotlight stuff */
+	private int location_spotLightPosition;
+	private int location_spotLightAttenuation;
+	private int location_spotLightDirection;
+	private int location_spotLightColor;
+	private int location_spotCosCutoff;
+
 	/** uniform location of sky color */
 	private int location_skyColor;
 
@@ -39,6 +46,11 @@ public class DynamicShader extends Shader {
 		this.location_transparent = super.getUniformLocation("transparent");
 		this.location_useFakeLighting = super.getUniformLocation("useFakeLighting");
 		this.location_skyColor = super.getUniformLocation("skyColor");
+		this.location_spotLightPosition = super.getUniformLocation("spotLightPosition");
+		this.location_spotLightAttenuation = super.getUniformLocation("spotLightAttenuation");
+		this.location_spotLightDirection = super.getUniformLocation("spotLightDirection");
+		this.location_spotLightColor = super.getUniformLocation("spotLightColor");
+		this.location_spotCosCutoff = super.getUniformLocation("spotCosCutoff");
 
 		// Get array uniforms
 		this.location_lightPositions = new int[UnnamedGame.MAX_LIGHTS];
@@ -59,6 +71,12 @@ public class DynamicShader extends Shader {
 
 		super.loadFloat(this.location_ambient, UnnamedGame.AMBIENT);
 		super.loadFloat(location_density, UnnamedGame.DENSITY);
+
+		super.loadVector3f(this.location_spotLightPosition, UnnamedGame.SPOTLIGHT.position);
+		super.loadVector3f(this.location_spotLightDirection, UnnamedGame.SPOTLIGHT.direction);
+		super.loadVector3f(this.location_spotLightColor, UnnamedGame.SPOTLIGHT.color);
+		super.loadVector3f(this.location_spotLightAttenuation, UnnamedGame.SPOTLIGHT.attenuation);
+		super.loadFloat(this.location_spotCosCutoff, UnnamedGame.SPOTLIGHT.cutoffAngle);
 
 		// TODO: refactor light stuff
 		for (int i = 0; i < UnnamedGame.MAX_LIGHTS; i++) {

@@ -95,6 +95,7 @@ vec4 calculateColor() {
 	float ndotl = max(dot(spotLightDirection, -toSpotLightVector), 0.0);
 	float spotlighteffect = calculateSpotlightEffect(ndotl) / calculateLightAttenuation(spotLightAttenuation, toSpotLightVector);
 	totalDiffuse = totalDiffuse + spotlighteffect * spotLightColor;
+	clamp(totalDiffuse, 0.0, 1.0);
 
 	return vec4(totalDiffuse, 1.0) * blendColor;
 }

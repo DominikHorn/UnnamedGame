@@ -3,6 +3,7 @@
 in vec3 surfaceNormal;
 in vec3 toLightVectors[4];
 in vec3 toCameraVector;
+in vec3 toSpotLightVector;
 in vec2 pass_textureCoords;
 in float visibility;
 
@@ -12,6 +13,10 @@ uniform sampler2D textureSampler;
 uniform vec3 skyColor;
 uniform vec3 lightColors[4];
 uniform vec3 lightAttenuations[4];
+uniform vec3 spotLightAttenuation;
+uniform vec3 spotLightDirection;
+uniform vec3 spotLightColor;
+uniform float spotCosCutoff;
 uniform float shineDamper;
 uniform float reflectivity;
 uniform float transparent;
@@ -49,6 +54,21 @@ float calculateLightAttenuation(vec3 attenuation, vec3 toLightVector) {
 }
 
 /**
+ * Calculates spotlight values
+ */
+float calculateSpotlightEffect(float ndotl) {
+	float spoteffect = 0;
+	if (ndotl > 0.0) {
+		spoteffect = dot(spotLightDirection, normalize(-toSpotLightVector));
+		if (spoteffect > spotCosCutoff) {
+			spoteffect = pow(spoteffect, 2);
+		}
+	}
+
+	return spoteffect;
+}
+
+/**
  * Calculates color, taking both diffuse and specular lighting into consideration
  */
 vec4 calculateColor() {
@@ -71,6 +91,12 @@ vec4 calculateColor() {
 		totalSpecular = totalSpecular + (calculateSpecular(unitSurfaceNormal, unitVectorToCamera, toLightVectors[i], lightColors[i]) / attFac);
 	}
 	totalDiffuse = max(totalDiffuse, ambient);
+
+	// Handle spotlight
+	float ndotl = max(dot(spotLightDirection, -toSpotLightVector), 0.0);
+	float spotlighteffect = calculateSpotlightEffect(ndotl) / calculateLightAttenuation(spotLightAttenuation, toSpotLightVector);
+	totalDiffuse = totalDiffuse + spotlighteffect * spotLightColor;
+	clamp(totalDiffuse, 0.0, 1.0);
 
 	return vec4(totalDiffuse, 1.0) * blendColor + vec4(totalSpecular, 1.0);
 }

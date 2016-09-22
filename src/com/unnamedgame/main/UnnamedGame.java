@@ -43,7 +43,7 @@ public class UnnamedGame extends Basic3DGame {
 	public static Terrain TERRAIN;
 
 	/** TODO: tmp */
-	public static float AMBIENT = 0.05f;
+	public static float AMBIENT = 0.1f;
 	public static float DENSITY = 0.005f;
 
 	private RenderableEntity<?> player;
@@ -137,6 +137,9 @@ public class UnnamedGame extends Basic3DGame {
 		// Check whether or not we should quit
 		if (this.isQuitRequestedByEngine() || Engine.getInputManager().isKeyDown(InputManager.KEY_ESC))
 			this.quit();
+		
+		// TODO: implement spotlight in dynamic shader
+
 	}
 
 	@Override
