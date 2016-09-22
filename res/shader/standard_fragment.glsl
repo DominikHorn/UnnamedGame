@@ -15,6 +15,7 @@ uniform vec3 lightAttenuations[4];
 uniform float shineDamper;
 uniform float reflectivity;
 uniform float transparent;
+uniform float ambient = 0.05;
 
 /**
  * Calculates diffuse light component for light source
@@ -69,7 +70,7 @@ vec4 calculateColor() {
 		totalDiffuse = totalDiffuse + (calculateDiffuse(unitSurfaceNormal, toLightVectors[i], lightColors[i]) / attFac);
 		totalSpecular = totalSpecular + (calculateSpecular(unitSurfaceNormal, unitVectorToCamera, toLightVectors[i], lightColors[i]) / attFac);
 	}
-	totalDiffuse = max(totalDiffuse, 0.05);
+	totalDiffuse = max(totalDiffuse, ambient);
 
 	return vec4(totalDiffuse, 1.0) * blendColor + vec4(totalSpecular, 1.0);
 }

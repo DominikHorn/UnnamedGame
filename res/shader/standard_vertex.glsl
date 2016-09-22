@@ -20,8 +20,9 @@ uniform float useFakeLighting;
 uniform vec2 texOffset;
 uniform int texAtlasRowCount;
 
-const float density = 0.005;
-const float gradient = 1.5;
+// Fog stuff
+uniform float density = 0.005;
+uniform float gradient = 1.5;
 
 void main(void) {
 	vec4 worldPosition = transformationMatrix * vec4(position, 1.0);

@@ -5,29 +5,23 @@ import com.openglengine.util.math.*;
 import com.unnamedgame.main.*;
 
 public class DynamicShader extends Shader {
-	/** uniform location of the lights position shader attrib */
-	public int[] location_lightPositions;
+	/** uniform location of ambient light amount */
+	private int location_ambient;
+	private int location_density;
 
-	/** uniform location of the lights color shader attrib */
-	public int[] location_lightColors;
-
-	/** uniform location of the lights brightness shader attrib */
-	public int[] location_lightAttenuation;
-
-	/** uniform location of the shine dampener shader attrib */
-	public int location_shineDamper;
-
-	/** uniform location of the reflectivity shader attrib */
-	public int location_reflectivity;
-
-	/** uniform location of light source brightness */
-	public int location_transparent;
-
-	/** uniform location of fake lighting property */
-	public int location_useFakeLighting;
+	/** uniform location of light stuff */
+	private int[] location_lightPositions;
+	private int[] location_lightColors;
+	private int[] location_lightAttenuation;
 
 	/** uniform location of sky color */
-	public int location_skyColor;
+	private int location_skyColor;
+
+	/** uniform location of material attribs */
+	public int location_shineDamper;
+	public int location_reflectivity;
+	public int location_transparent;
+	public int location_useFakeLighting;
 
 	public DynamicShader() {
 		this.compileShaderFromFiles(UnnamedGame.SHADER_FOLDER + "standard_vertex.glsl",
@@ -38,6 +32,8 @@ public class DynamicShader extends Shader {
 	protected void getAllUniformLocations() {
 		super.getAllUniformLocations();
 
+		this.location_ambient = super.getUniformLocation("ambient");
+		this.location_density = super.getUniformLocation("density");
 		this.location_shineDamper = super.getUniformLocation("shineDamper");
 		this.location_reflectivity = super.getUniformLocation("reflectivity");
 		this.location_transparent = super.getUniformLocation("transparent");
@@ -60,6 +56,9 @@ public class DynamicShader extends Shader {
 	public void uploadGlobalUniforms() {
 		// TODO: refactor sky color
 		super.loadVector3f(location_skyColor, UnnamedGame.SKY_COLOR);
+
+		super.loadFloat(this.location_ambient, UnnamedGame.AMBIENT);
+		super.loadFloat(location_density, UnnamedGame.DENSITY);
 
 		// TODO: refactor light stuff
 		for (int i = 0; i < UnnamedGame.MAX_LIGHTS; i++) {

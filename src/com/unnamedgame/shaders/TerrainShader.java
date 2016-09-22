@@ -5,36 +5,39 @@ import com.openglengine.util.math.*;
 import com.unnamedgame.main.*;
 
 public class TerrainShader extends Shader {
-
+	/** ambient light uniform location */
+	private int location_ambient;
+	private int location_density;
+	
 	/** uniform location of lights stuff */
-	public int[] location_lightPositions;
-	public int[] location_lightColors;
-	public int[] location_lightAttenuations;
+	private int[] location_lightPositions;
+	private int[] location_lightColors;
+	private int[] location_lightAttenuations;
 
 	/** uniform locations spotlight stuff */
-	public int location_spotLightPosition;
-	public int location_spotLightAttenuation;
-	public int location_spotLightDirection;
-	public int location_spotLightColor;
-	public int location_spotCosCutoff;
+	private int location_spotLightPosition;
+	private int location_spotLightAttenuation;
+	private int location_spotLightDirection;
+	private int location_spotLightColor;
+	private int location_spotCosCutoff;
 
 	/** uniform location of sky color */
-	public int location_skyColor;
+	private int location_skyColor;
 
 	/** uniform location of sky color */
-	public int location_backgroundTexture;
+	private int location_backgroundTexture;
 
 	/** uniform location of sky color */
-	public int location_rTexture;
+	private int location_rTexture;
 
 	/** uniform location of sky color */
-	public int location_gTexture;
+	private int location_gTexture;
 
 	/** uniform location of sky color */
-	public int location_bTexture;
+	private int location_bTexture;
 
 	/** uniform location of sky color */
-	public int location_blendMap;
+	private int location_blendMap;
 
 	public TerrainShader() {
 		this.compileShaderFromFiles(UnnamedGame.SHADER_FOLDER + "terrain_vertex.glsl",
@@ -45,6 +48,8 @@ public class TerrainShader extends Shader {
 	protected void getAllUniformLocations() {
 		super.getAllUniformLocations();
 
+		this.location_ambient = super.getUniformLocation("ambient");
+		this.location_density = super.getUniformLocation("density");
 		this.location_skyColor = super.getUniformLocation("skyColor");
 		this.location_backgroundTexture = super.getUniformLocation("backgroundTexture");
 		this.location_rTexture = super.getUniformLocation("rTexture");
@@ -79,6 +84,9 @@ public class TerrainShader extends Shader {
 		super.loadInt(location_gTexture, 2);
 		super.loadInt(location_bTexture, 3);
 		super.loadInt(location_blendMap, 4);
+
+		super.loadFloat(location_ambient, UnnamedGame.AMBIENT);
+		super.loadFloat(location_density, UnnamedGame.DENSITY);
 
 		super.loadVector3f(this.location_spotLightPosition, UnnamedGame.SPOTLIGHT.position);
 		super.loadVector3f(this.location_spotLightDirection, UnnamedGame.SPOTLIGHT.direction);

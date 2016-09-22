@@ -17,8 +17,9 @@ uniform mat4 viewMatrix;
 uniform vec3 lightPositions[4];
 uniform vec3 spotLightPosition;
 
-const float density = 0.005;
-const float gradient = 1.5;
+// Fog calculation
+uniform float density = 0.005;
+uniform float gradient = 1.5;
 
 void main(void) {
 	// Compute position

@@ -42,9 +42,14 @@ public class UnnamedGame extends Basic3DGame {
 	public static Vector3f SKY_COLOR;
 	public static Terrain TERRAIN;
 
+	/** TODO: tmp */
+	public static float AMBIENT = 0.05f;
+	public static float DENSITY = 0.005f;
+
 	private RenderableEntity<?> player;
 
 	// TODO: tmp debug
+	private boolean ambientChangeable = true;
 	private boolean wireframe = false;
 
 	public UnnamedGame() throws IOException {
@@ -62,8 +67,9 @@ public class UnnamedGame extends Basic3DGame {
 
 		// Setup globals
 		TERRAIN = new Terrain();
-		// POINT_LIGHTS.add(
-		// new LightSource(new Vector3f(100, 20, 0), new Vector3f(1, 1, 1), new Vector3f(1f, 0.1f, 0.002f)));
+		// POINT_LIGHTS
+		// .add(new LightSource(new Vector3f(0, 20, 0), new Vector3f(1, 1, 1),
+		// new Vector3f(1f, 0f, 0f)));
 		// POINT_LIGHTS.add(
 		// new LightSource(new Vector3f(-100, 20, 0), new Vector3f(1, 1, 1), new Vector3f(0.5f, 0.01f, 0.0002f)));
 		// POINT_LIGHTS.add(
@@ -71,9 +77,8 @@ public class UnnamedGame extends Basic3DGame {
 		// POINT_LIGHTS.add(
 		// new LightSource(new Vector3f(0, 20, -100), new Vector3f(1, 1, 1), new Vector3f(0.5f, 0.01f, 0.0002f)));
 		SPOTLIGHT = new SpotLightSource(new Vector3f(0, 5f, 0), new Vector3f(1, 0.9f, 0.7f),
-				new Vector3f(1f, 0.01f, 0.0002f), new Vector3f(0f, -1f, 0f),
-				(float) Math.cos(Math.toRadians(180)));
-		
+				new Vector3f(1f, 0.01f, 0.0002f), new Vector3f(0f, -1f, 0f), (float) Math.cos(Math.toRadians(180)));
+
 		// Don't grab the mouse (until we have a fps camera)
 		Engine.getInputManager().setMouseGrabbed(false);
 
@@ -88,9 +93,7 @@ public class UnnamedGame extends Basic3DGame {
 
 	@Override
 	protected void update(double deltatime) {
-		// TODO: use delta time
-
-		// TODO: tmp debug stuff
+		/** TODO tmp debug stuff */
 		if (Engine.getInputManager().wasKeyPressed(InputManager.KEY_F1)) {
 			this.wireframe = !this.wireframe;
 
@@ -99,6 +102,28 @@ public class UnnamedGame extends Basic3DGame {
 			else
 				GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
 		}
+		if (Engine.getInputManager().isKeyDown(InputManager.KEY_F2)) {
+			if (Engine.getInputManager().wasKeyPressed(InputManager.KEY_PLUS) && this.ambientChangeable) {
+				AMBIENT += 0.1f;
+				this.ambientChangeable = false;
+			} else if (Engine.getInputManager().wasKeyPressed(InputManager.KEY_MINUS) && this.ambientChangeable) {
+				AMBIENT -= 0.1f;
+				this.ambientChangeable = false;
+			} else {
+				this.ambientChangeable = true;
+			}
+
+			AMBIENT = MathUtils.clamp(AMBIENT, 0.0f, 1.0f);
+		}
+		if (Engine.getInputManager().isKeyDown(InputManager.KEY_F3)) {
+			if (Engine.getInputManager().isKeyDown(InputManager.KEY_PLUS)) {
+				DENSITY += 0.0001f;
+			}
+			if (Engine.getInputManager().isKeyDown(InputManager.KEY_MINUS)) {
+				DENSITY -= 0.0001f;
+			}
+		}
+		// TODO: use delta time
 
 		// Update terrain
 		TERRAIN.update();

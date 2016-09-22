@@ -22,6 +22,7 @@ uniform vec3 spotLightAttenuation;
 uniform vec3 spotLightDirection;
 uniform vec3 spotLightColor;
 uniform float spotCosCutoff;
+uniform float ambient = 0.05;
 
 /**
  * Calculates color from the blendmap and corresponding textures
@@ -88,7 +89,7 @@ vec4 calculateColor() {
 		float attFac = calculateLightAttenuation(lightAttenuations[i], toLightVectors[i]);
 		totalDiffuse = totalDiffuse + (calculateDiffuse(unitSurfaceNormal, toLightVectors[i], lightColors[i]) / attFac);
 	}
-	totalDiffuse = max(totalDiffuse, 0.05);
+	totalDiffuse = max(totalDiffuse, ambient);
 
 	// Handle spotlight
 	float ndotl = max(dot(spotLightDirection, -toSpotLightVector), 0.0);
