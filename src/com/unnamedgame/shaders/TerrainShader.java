@@ -85,7 +85,7 @@ public class TerrainShader extends Shader {
 		super.loadInt(location_bTexture, 3);
 		super.loadInt(location_blendMap, 4);
 
-		super.loadFloat(location_ambient, UnnamedGame.AMBIENT);
+		super.loadFloat(location_ambient, UnnamedGame.AMBIENCE);
 		super.loadFloat(location_density, UnnamedGame.DENSITY);
 
 		super.loadVector3f(this.location_spotLightPosition, UnnamedGame.SPOTLIGHT.position);

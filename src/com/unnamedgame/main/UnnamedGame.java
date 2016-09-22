@@ -46,7 +46,7 @@ public class UnnamedGame extends Basic3DGame {
 
 
 	/** TODO: tmp */
-	public static float AMBIENT = 0.01f;
+	public static float AMBIENCE = 0.04f;
 	public static float DENSITY = 0.01f;
 
 	private RenderableEntity<?> player;
@@ -57,7 +57,14 @@ public class UnnamedGame extends Basic3DGame {
 	private boolean wireframe = false;
 
 	public UnnamedGame() throws IOException {
+		this(0.04f, 0.01f);
+	}
+
+	public UnnamedGame(float ambience, float density) throws IOException {
 		super(FOV, NEAR_PLANE, FAR_PLANE);
+		AMBIENCE = ambience;
+		DENSITY = density;
+		this.startGame();
 	}
 
 	@Override
@@ -73,9 +80,9 @@ public class UnnamedGame extends Basic3DGame {
 		TERRAIN = new Terrain();
 		// POINT_LIGHTS.add(new LightSource(new Vector3f(1000, 200f, 0f), new Vector3f(0.7f, 0.7f, 0.7f),
 		// new Vector3f(1f, 0f, 0f)));
-		POINT_LIGHTS.add(
-				new LightSource(new Vector3f(-200, 20, -200), new Vector3f(1, 1, 1),
-						new Vector3f(0.5f, 0.01f, 0.0002f)));
+		// POINT_LIGHTS.add(
+		// new LightSource(new Vector3f(-200, 1, -200), new Vector3f(1, 1, 1),
+		// new Vector3f(0.5f, 0.01f, 0.0002f)));
 		// POINT_LIGHTS.add(
 		// new LightSource(new Vector3f(0, 20, 100), new Vector3f(1, 1, 1), new Vector3f(0.5f, 0.01f, 0.0002f)));
 		// POINT_LIGHTS.add(
@@ -111,16 +118,16 @@ public class UnnamedGame extends Basic3DGame {
 		}
 		if (Engine.getInputManager().isKeyDown(InputManager.KEY_F2)) {
 			if (Engine.getInputManager().wasKeyPressed(InputManager.KEY_PLUS) && this.ambientChangeable) {
-				AMBIENT += 0.1f;
+				AMBIENCE += 0.1f;
 				this.ambientChangeable = false;
 			} else if (Engine.getInputManager().wasKeyPressed(InputManager.KEY_MINUS) && this.ambientChangeable) {
-				AMBIENT -= 0.1f;
+				AMBIENCE -= 0.1f;
 				this.ambientChangeable = false;
 			} else {
 				this.ambientChangeable = true;
 			}
 
-			AMBIENT = MathUtils.clamp(AMBIENT, 0.0f, 1.0f);
+			AMBIENCE = MathUtils.clamp(AMBIENCE, 0.0f, 1.0f);
 		}
 		if (Engine.getInputManager().isKeyDown(InputManager.KEY_F3)) {
 			if (Engine.getInputManager().isKeyDown(InputManager.KEY_PLUS)) {
@@ -160,7 +167,8 @@ public class UnnamedGame extends Basic3DGame {
 	public static void main(String argv[]) {
 		Engine.getLogger().setLogLevel(LogLevel.LOG_DEBUG);
 		try {
-			new UnnamedGame();
+			// TODO: remove debug stuff
+			new UnnamedGame(new Float(argv[0]), new Float(argv[1]));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

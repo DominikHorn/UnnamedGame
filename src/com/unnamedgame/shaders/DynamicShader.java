@@ -69,7 +69,7 @@ public class DynamicShader extends Shader {
 		// TODO: refactor sky color
 		super.loadVector3f(location_skyColor, UnnamedGame.SKY_COLOR);
 
-		super.loadFloat(this.location_ambient, UnnamedGame.AMBIENT);
+		super.loadFloat(this.location_ambient, UnnamedGame.AMBIENCE);
 		super.loadFloat(location_density, UnnamedGame.DENSITY);
 
 		super.loadVector3f(this.location_spotLightPosition, UnnamedGame.SPOTLIGHT.position);
