@@ -68,13 +68,8 @@ public class EntityFactory {
 	public static RenderableEntity<?> getPlayerEntity(Vector3f position, Vector3f scale) {
 		RenderableEntity<?> e = new RenderableEntity<>(models.get("player"), position, new Vector3f(), scale);
 		e.addComponent(new PlayerPhysicsComponent());
-		e.addComponent(new CameraComponentFollowEntity());
-		return e;
-	}
-
-	public static Entity getCamera(Vector3f position) {
-		Entity e = new Entity(position, new Vector3f());
-		e.addComponent(new CameraComponentFlyoverObserver(1, 0.1f));
+		e.addComponent(
+				new CameraComponentFirstPerson(0.05f, (float) Math.toRadians(-80), (float) Math.toRadians(60)));
 		return e;
 	}
 

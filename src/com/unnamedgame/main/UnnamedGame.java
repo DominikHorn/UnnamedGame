@@ -43,8 +43,8 @@ public class UnnamedGame extends Basic3DGame {
 	public static Terrain TERRAIN;
 
 	/** TODO: tmp */
-	public static float AMBIENT = 0.1f;
-	public static float DENSITY = 0.005f;
+	public static float AMBIENT = 0.05f;
+	public static float DENSITY = 0.001f;
 
 	private RenderableEntity<?> player;
 
@@ -59,7 +59,7 @@ public class UnnamedGame extends Basic3DGame {
 	@Override
 	protected void setup() {
 		// Must be setup before entity factory
-		SKY_COLOR = new Vector3f(0f, 0f, 0f);
+		SKY_COLOR = new Vector3f(0.66f, 0.96f, 1f);
 		POINT_LIGHTS = new ArrayList<>();
 
 		// Load models
@@ -67,9 +67,9 @@ public class UnnamedGame extends Basic3DGame {
 
 		// Setup globals
 		TERRAIN = new Terrain();
-		// POINT_LIGHTS
-		// .add(new LightSource(new Vector3f(0, 20, 0), new Vector3f(1, 1, 1),
-		// new Vector3f(1f, 0f, 0f)));
+		POINT_LIGHTS
+				.add(new LightSource(new Vector3f(1000, 200f, 0f), new Vector3f(0.7f, 0.7f, 0.7f),
+						new Vector3f(1f, 0f, 0f)));
 		// POINT_LIGHTS.add(
 		// new LightSource(new Vector3f(-100, 20, 0), new Vector3f(1, 1, 1), new Vector3f(0.5f, 0.01f, 0.0002f)));
 		// POINT_LIGHTS.add(
@@ -79,8 +79,8 @@ public class UnnamedGame extends Basic3DGame {
 		SPOTLIGHT = new SpotLightSource(new Vector3f(0, 5f, 0), new Vector3f(1, 0.9f, 0.7f),
 				new Vector3f(1f, 0.01f, 0.0002f), new Vector3f(0f, -1f, 0f), (float) Math.cos(Math.toRadians(180)));
 
-		// Don't grab the mouse (until we have a fps camera)
-		Engine.getInputManager().setMouseGrabbed(false);
+		// Grab mouse
+		Engine.getInputManager().setMouseGrabbed(true);
 
 		// Create player entity
 		this.player = EntityFactory.getPlayerEntity(new Vector3f(0, 0, 0), new Vector3f(1f, 1f, 1f));
@@ -137,7 +137,7 @@ public class UnnamedGame extends Basic3DGame {
 		// Check whether or not we should quit
 		if (this.isQuitRequestedByEngine() || Engine.getInputManager().isKeyDown(InputManager.KEY_ESC))
 			this.quit();
-		
+
 		// TODO: implement spotlight in dynamic shader
 
 	}
