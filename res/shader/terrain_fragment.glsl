@@ -60,16 +60,8 @@ float calculateLightAttenuation(vec3 attenuation, vec3 toLightVector) {
 /**
  * Calculates spotlight values
  */
-float calculateSpotlightEffect(float ndotl) {
-	float spoteffect = 0;
-	if (ndotl > 0.0) {
-		spoteffect = dot(spotLightDirection, normalize(-toSpotLightVector));
-		if (spoteffect > spotCosCutoff) {
-			spoteffect = pow(spoteffect, 2);
-		}
-	}
-
-	return spoteffect;
+float calculateSpotlightEffect() {
+	return clamp(pow(dot(normalize(-toSpotLightVector), spotLightDirection), degrees(spotCosCutoff)), 0.0, 1.0);
 }
 
 /**
@@ -92,9 +84,9 @@ vec4 calculateColor() {
 	totalDiffuse = max(totalDiffuse, ambient);
 
 	// Handle spotlight
-	float ndotl = max(dot(spotLightDirection, -toSpotLightVector), 0.0);
-	float spotlighteffect = calculateSpotlightEffect(ndotl) / calculateLightAttenuation(spotLightAttenuation, toSpotLightVector);
-	totalDiffuse = totalDiffuse + spotlighteffect * spotLightColor;
+	float spoteffect = calculateSpotlightEffect() / calculateLightAttenuation(spotLightAttenuation, toSpotLightVector);
+
+	totalDiffuse = totalDiffuse + spoteffect * spotLightColor;
 	clamp(totalDiffuse, 0.0, 1.0);
 
 	return vec4(totalDiffuse, 1.0) * blendColor;

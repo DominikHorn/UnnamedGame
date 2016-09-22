@@ -8,6 +8,7 @@ import org.lwjgl.opengl.*;
 import com.openglengine.core.*;
 import com.openglengine.entitity.*;
 import com.openglengine.util.Logger.*;
+import com.openglengine.util.camera.*;
 import com.openglengine.util.light.*;
 import com.openglengine.util.math.*;
 import com.unnamedgame.terrain.*;
@@ -41,12 +42,15 @@ public class UnnamedGame extends Basic3DGame {
 	public static SpotLightSource SPOTLIGHT;
 	public static Vector3f SKY_COLOR;
 	public static Terrain TERRAIN;
+	public static FirstPersonCamera CAMERA;
+
 
 	/** TODO: tmp */
-	public static float AMBIENT = 0.05f;
-	public static float DENSITY = 0.001f;
+	public static float AMBIENT = 0.01f;
+	public static float DENSITY = 0.01f;
 
 	private RenderableEntity<?> player;
+
 
 	// TODO: tmp debug
 	private boolean ambientChangeable = true;
@@ -59,7 +63,7 @@ public class UnnamedGame extends Basic3DGame {
 	@Override
 	protected void setup() {
 		// Must be setup before entity factory
-		SKY_COLOR = new Vector3f(0.66f, 0.96f, 1f);
+		SKY_COLOR = new Vector3f(0, 0, 0f);
 		POINT_LIGHTS = new ArrayList<>();
 
 		// Load models
@@ -67,17 +71,20 @@ public class UnnamedGame extends Basic3DGame {
 
 		// Setup globals
 		TERRAIN = new Terrain();
-		POINT_LIGHTS
-				.add(new LightSource(new Vector3f(1000, 200f, 0f), new Vector3f(0.7f, 0.7f, 0.7f),
-						new Vector3f(1f, 0f, 0f)));
-		// POINT_LIGHTS.add(
-		// new LightSource(new Vector3f(-100, 20, 0), new Vector3f(1, 1, 1), new Vector3f(0.5f, 0.01f, 0.0002f)));
+		// POINT_LIGHTS.add(new LightSource(new Vector3f(1000, 200f, 0f), new Vector3f(0.7f, 0.7f, 0.7f),
+		// new Vector3f(1f, 0f, 0f)));
+		POINT_LIGHTS.add(
+				new LightSource(new Vector3f(-200, 20, -200), new Vector3f(1, 1, 1),
+						new Vector3f(0.5f, 0.01f, 0.0002f)));
 		// POINT_LIGHTS.add(
 		// new LightSource(new Vector3f(0, 20, 100), new Vector3f(1, 1, 1), new Vector3f(0.5f, 0.01f, 0.0002f)));
 		// POINT_LIGHTS.add(
 		// new LightSource(new Vector3f(0, 20, -100), new Vector3f(1, 1, 1), new Vector3f(0.5f, 0.01f, 0.0002f)));
 		SPOTLIGHT = new SpotLightSource(new Vector3f(0, 5f, 0), new Vector3f(1, 0.9f, 0.7f),
-				new Vector3f(1f, 0.01f, 0.0002f), new Vector3f(0f, -1f, 0f), (float) Math.cos(Math.toRadians(180)));
+				new Vector3f(1f, 0, 0), new Vector3f(0f, -1f, 0f), (float) Math.cos(Math.toRadians(40f)));
+
+		// Create Camera
+		CAMERA = new FirstPersonCamera(0.05f, (float) Math.toRadians(-80), (float) Math.toRadians(60));
 
 		// Grab mouse
 		Engine.getInputManager().setMouseGrabbed(true);
@@ -137,9 +144,6 @@ public class UnnamedGame extends Basic3DGame {
 		// Check whether or not we should quit
 		if (this.isQuitRequestedByEngine() || Engine.getInputManager().isKeyDown(InputManager.KEY_ESC))
 			this.quit();
-
-		// TODO: implement spotlight in dynamic shader
-
 	}
 
 	@Override

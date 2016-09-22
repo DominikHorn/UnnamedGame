@@ -6,7 +6,6 @@ import org.lwjgl.opengl.*;
 
 import com.openglengine.core.*;
 import com.openglengine.entitity.*;
-import com.openglengine.entitity.component.defaultcomponents.*;
 import com.openglengine.renderer.model.*;
 import com.openglengine.util.math.*;
 import com.unnamedgame.components.*;
@@ -68,8 +67,7 @@ public class EntityFactory {
 	public static RenderableEntity<?> getPlayerEntity(Vector3f position, Vector3f scale) {
 		RenderableEntity<?> e = new RenderableEntity<>(models.get("player"), position, new Vector3f(), scale);
 		e.addComponent(new PlayerPhysicsComponent());
-		e.addComponent(
-				new CameraComponentFirstPerson(0.05f, (float) Math.toRadians(-80), (float) Math.toRadians(60)));
+		e.addComponent(new SpotLightFollowComponent());
 		return e;
 	}
 
